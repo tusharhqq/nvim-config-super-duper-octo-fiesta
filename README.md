@@ -78,7 +78,7 @@ Here is a small list of shortcuts (space is my leader key)
 
 
 
- <br/><br/>   lsp ones
+ <br/><br/>   lsp ones<br/>
 36. `control p` select the previous item<br/>
 37. `control n` select the next item<br/>
 38. `control y` confirm, don't forget this one, it's important cause without this u will kinda hate lsp<br/>
@@ -110,10 +110,10 @@ Here is a small list of shortcuts (space is my leader key)
 
 
 
-<br/><br/> fzf ones
-56. `fzf` for simple searching for a file in terminal
-57. `fzf --preview='cat {}'` with this we can preview different files for searching for a particular file
-58. `nvim $(fzf --preview='cat {}')` for searching a file a then opening that file in nvim
+<br/><br/>  fzf ones<br/>
+56. `fzf` for simple searching for a file in terminal<br/>
+57. `fzf --preview='cat {}'` with this we can preview different files for searching for a particular file<br/>
+58. `nvim $(fzf --preview='cat {}')` for searching a file a then opening that file in nvim<br/>
 
 
 there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
