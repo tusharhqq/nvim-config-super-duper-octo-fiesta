@@ -109,6 +109,13 @@ Here is a small list of shortcuts (space is my leader key)
 55. `ctrl r` to fzf zsh history<br/> 
 
 
+
+<br/><br/> fzf ones
+56. `fzf` for simple searching for a file in terminal
+57. `fzf --preview='cat {}'` with this we can preview different files for searching for a particular file
+58. `nvim $(fzf --preview='cat {}')` for searching a file a then opening that file in nvim
+
+
 there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
 
 
@@ -118,5 +125,5 @@ Subdirectories include:
 
 Check the `nvim` folder for configuration. For more instructions, see the README there.
 
-> *this page was last updated on 25 Jan 2024. please contact me if you notice it is outdated, or if you would like more recent information.*
+> *this page was last updated on 19 May 2024. please contact me if you notice it is outdated, or if you would like more recent information.*
 
