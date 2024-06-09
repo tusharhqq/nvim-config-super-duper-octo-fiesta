@@ -115,6 +115,8 @@ Here is a small list of shortcuts (space is my leader key)
 57. `fzf --preview='cat {}'` with this we can preview different files for searching for a particular file<br/>
 58. `nvim $(fzf --preview='cat {}')` for searching a file a then opening that file in nvim<br/>
 
+59. `diw`, `diW` are a better alternative for using multiple dw (delete word), `diw` will delete the word i am middle of, `diW` will delete the entire thing we r inside of<br/>
+
 
 there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
 
