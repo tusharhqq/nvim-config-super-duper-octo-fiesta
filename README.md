@@ -86,36 +86,37 @@ Here is a small list of shortcuts (space is my leader key)
 
 <br/><br/>
 40. `gd` lsp buffer definition<br/>
-41. `K` Hower<br/>
-42. `vws` workspace symbols<br/>
-43. `<leader>vd` diagnostic open float<br/>
-44. `[d` diagnostic goto next<br/>
-45. `]d` diagnostic goto prev<br/>
-46. `<leader>vca` buffer code action<br/>
-47. `<leader>vrr` buffer references<br/>
-48. `<leader>vrn` buffer rename<br/>
-49. `control h` signature help<br/>
+41. `control o` for going back from buffer to the original file<br/>
+42. `K` Hower<br/>
+43. `vws` workspace symbols<br/>
+44. `<leader>vd` diagnostic open float<br/>
+45. `[d` diagnostic goto next<br/>
+46. `]d` diagnostic goto prev<br/>
+47. `<leader>vca` buffer code action<br/>
+48. `<leader>vrr` buffer references<br/>
+49. `<leader>vrn` buffer rename<br/>
+50. `control h` signature help<br/>
 
 
 
 <br/><br/>
-50. `control v` then highlight the area/block u want to comment `shift i` to go into insert mode at the very start of the line<br/>
+51. `control v` then highlight the area/block u want to comment `shift i` to go into insert mode at the very start of the line<br/>
     `//` and then press ESC or control [<br/>
-51. `vi"` and it will select everything within double quotes or `vi(`, the best part is it will jump the cursor before the string<br/>
-52. `"+y` to copy into clipboard from Vim editor<br/>
+52. `vi"` and it will select everything within double quotes or `vi(`, the best part is it will jump the cursor before the string<br/>
+53. `"+y` to copy into clipboard from Vim editor<br/>
     `"` says to use a register, `+` specifies the register to use (where + means the system clipboard in this case)m `y` is the yank operation<br/>
-53. `"+p` and `"+P` paste into vim from system clipboard<br/>
-54. `gg"+yG` if u r in normal mode and want to select all the content on the current file, something which we usually do via `cmd a` in our normal day to day browsing<br/>
-55. `ctrl r` to fzf zsh history<br/> 
+54. `"+p` and `"+P` paste into vim from system clipboard<br/>
+55. `gg"+yG` if u r in normal mode and want to select all the content on the current file, something which we usually do via `cmd a` in our normal day to day browsing<br/>
+56. `ctrl r` to fzf zsh history<br/> 
 
 
 
 <br/><br/>  fzf ones<br/>
-56. `fzf` for simple searching for a file in terminal<br/>
-57. `fzf --preview='cat {}'` with this we can preview different files for searching for a particular file<br/>
-58. `nvim $(fzf --preview='cat {}')` for searching a file a then opening that file in nvim<br/>
+57. `fzf` for simple searching for a file in terminal<br/>
+58. `fzf --preview='cat {}'` with this we can preview different files for searching for a particular file<br/>
+59. `nvim $(fzf --preview='cat {}')` for searching a file a then opening that file in nvim<br/>
 
-59. `diw`, `diW` are a better alternative for using multiple dw (delete word), `diw` will delete the word i am middle of, `diW` will delete the entire thing we r inside of<br/>
+60. `diw`, `diW` are a better alternative for using multiple dw (delete word), `diw` will delete the word i am middle of, `diW` will delete the entire thing we r inside of<br/>
 
 
 there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
@@ -127,5 +128,5 @@ Subdirectories include:
 
 Check the `nvim` folder for configuration. For more instructions, see the README there.
 
-> *this page was last updated on 19 May 2024. please contact me if you notice it is outdated, or if you would like more recent information.*
+> *this page was last updated on 3 July 2024. please contact me if you notice it is outdated, or if you would like more recent information.*
 
