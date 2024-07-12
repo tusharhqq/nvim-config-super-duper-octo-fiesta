@@ -118,6 +118,7 @@ Here is a small list of shortcuts (space is my leader key)
 
 60. `diw`, `diW` are a better alternative for using multiple dw (delete word), `diw` will delete the word i am middle of, `diW` will delete the entire thing we r inside of<br/>
 
+61. `<leader>f` after installing prettier using the command `bun i --save-dev prettier`, we can using prettier format using this command for formating inside the vim in a instant<br/>
 
 there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
 
