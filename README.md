@@ -120,6 +120,12 @@ Here is a small list of shortcuts (space is my leader key)
 
 61. `<leader>f` after installing prettier using the command `bun i --save-dev prettier`, we can using prettier format using this command for formating inside the vim in a instant<br/>
 
+<br/><br/> just added vim-sneak<br/>
+62. `s<char><char>` to search this two character combination in your entire file, and all the other additional gets lighted in beautiful pink color, which is lovely to see with naked eyes, u will be mesmerised the movement u see it<br/>
+63. `;` for going to next match of that two character sequence that u just searched or u can also do s<char><char> for repeat that again, but u would be done if u do so, like why in the world would u want to do that, r u dumb or what, just do `;`
+64. `3;` to skip to the third (3rd) match from your current<br/>
+65. `ctrl o` for going back to that starting position
+
 there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
 
 
