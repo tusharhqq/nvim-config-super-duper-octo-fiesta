@@ -124,7 +124,9 @@ Here is a small list of shortcuts (space is my leader key)
 62. `s<char><char>` to search this two character combination in your entire file, and all the other additional gets lighted in beautiful pink color, which is lovely to see with naked eyes, u will be mesmerised the movement u see it<br/>
 63. `;` for going to next match of that two character sequence that u just searched or u can also do s<char><char> for repeat that again, but u would be done if u do so, like why in the world would u want to do that, r u dumb or what, just do `;`
 64. `3;` to skip to the third (3rd) match from your current<br/>
-65. `ctrl o` for going back to that starting position
+65. `ctrl o` for going back to that starting position<br/>
+66. `s<Enter>` to repeat the last search<br/>
+67. `S` for searching backwards<br/>
 
 there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
 
