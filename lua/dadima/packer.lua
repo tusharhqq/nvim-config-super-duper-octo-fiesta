@@ -6,6 +6,47 @@ vim.cmd.packadd('packer.nvim')
 return require('packer').startup(function(use)
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
+  use 'justinmk/vim-sneak'
+
+
+
+
+  use ({
+      'nvimtools/none-ls.nvim',
+      opts = function ()
+      end,
+      })
+
+  use ({
+      'windwp/nvim-ts-autotag',
+      ft = {
+          "javascript",
+          "typescript",
+          "typescriptreact",
+          "javascriptreact"
+      },
+
+      config = function ()
+          require("nvim-ts-autotag").setup()
+      end
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  use 'sbdchd/neoformat'
   use {
 	  'nvim-telescope/telescope.nvim', tag = '0.1.5',
 	  -- or                            , branch = '0.1.x',
@@ -34,7 +75,14 @@ return require('packer').startup(function(use)
   use("ThePrimeagen/vim-be-good")
 --  use { 'sourcegraph/sg.nvim', run = 'nvim -l build/init.lua' }
 --  use { 'nvim-lua/plenary.nvim' }
-  use("github/copilot.vim")
+
+--use{
+--    "github/copilot.vim",
+--    cmd = "Copilot",
+--    event = "TextChangedI",
+--    ft = "markdown"
+--}
+
   use {
       'VonHeikemen/lsp-zero.nvim',
       branch = 'v1.x',
@@ -51,10 +99,14 @@ return require('packer').startup(function(use)
 		  {'saadparwaiz1/cmp_luasnip'},
 		  {'hrsh7th/cmp-nvim-lsp'},
 		  {'hrsh7th/cmp-nvim-lua'},
+          {'hrsh7th/cmp-cmdline'},
 
 		  -- Snippets
 		  {'L3MON4D3/LuaSnip'},
 		  {'rafamadriz/friendly-snippets'},
+
+          {'j-hui/fidget.nvim'},
+
 	  }
   }
   end)
