@@ -136,5 +136,5 @@ Subdirectories include:
 
 Check the `nvim` folder for configuration. For more instructions, see the README there.
 
-> *this page was last updated on 3 July 2024. please contact me if you notice it is outdated, or if you would like more recent information.*
+> *this page was last updated on 6 Aug 2024. please contact me if you notice it is outdated, or if you would like more recent information.*
 
