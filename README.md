@@ -1,7 +1,6 @@
 # nvim-config-super-duper-octo-fiesta
 My configuration files and tools
 
-found something really cool, try it on this repo
 This is tushar's configuration repo. Feel free to use whatever you would like from it! It'd be great if you mentioned where it came from if you think it's cool.
 
 in the end it will look like this
