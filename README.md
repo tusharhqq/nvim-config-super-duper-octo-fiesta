@@ -127,6 +127,11 @@ Here is a small list of shortcuts (space is my leader key)
 66. `s<Enter>` to repeat the last search<br/>
 67. `S` for searching backwards<br/>
 
+68. `cit` to change inside tags after deleting everthing inside those tags
+69. `dit` to delete everthing inside those tags
+70. `.` this will repeat the previous command
+71. `:set wrap` to wrap long lines
+
 there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
 
 
