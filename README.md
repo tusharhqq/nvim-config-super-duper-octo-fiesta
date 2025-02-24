@@ -28,11 +28,11 @@ Here is a small list of shortcuts (space is my leader key)
 6. `:so` to source that file
 7. a small tip for indentation: `=ap` for indenting the entire file
 8. `=` After highlighting in visual mode, this will indent the highlighted portion
-9. `:PackerSync` for synching packers
+9. `:Lazy sync` for synching packages
 10. `<leader>pf` find files by typing their name
 11. `<leader>ps` this opens grep find words in the entire directory
 12. `ciw` delete the current word and go to insert mode
-13. `lua ColorMyPencils()` After doing :PackerSync the background waifu disappears, this is to bring our waifu back
+13. `lua ColorMyPencils()` After doing :Lazy sync the background waifu disappears, this is to bring our waifu back
 14. `:TSPlaygroundToggle` A syntax tree, also known as a parse tree or abstract syntax tree (AST), is a hierarchical representation of the syntactic structure of a program or a piece of code. It illustrates how the various elements of the code relate to each other grammatically.
 <br/> <br/>   Harpoon shortcuts
 15. `control e` harpoon menu
