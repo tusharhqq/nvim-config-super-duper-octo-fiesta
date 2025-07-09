@@ -140,7 +140,7 @@ alias ea='nvim $(fzf --preview="cat {}")'
 alias gst='git status'
 alias gaa='git add -A'
 alias gc='git commit'
-alias gcm='git checkout trunk'
+alias gcm='git checkout trunk || git checkout main || git checkout master' 
 alias gd='git diff'
 alias gdc='git diff --cached'
 # [c]heck [o]ut
@@ -250,88 +250,14 @@ local dir_info="%{$dir_info_color%}%(5~|%-1~/.../%2~|%4~)%{$reset_color%}"
 local promptnormal="φ %{$reset_color%}"
 local promptjobs="%{$fg_bold[red]%}φ %{$reset_color%}"
 
-# Show how many nested `nix shell`s we are in
-# local nix_prompt=""
-# # Set ORIG_SHLVL only if it wasn't previously set and if SHLVL > 1 and
-# # GHOSTTY_RESOURCES_DIR is not empty
-# if [[ -z $ORIG_SHLVL ]]; then
-#   if [[ -z $GHOSTTY_RESOURCES_DIR ]]; then
-#     export ORIG_SHLVL=$SHLVL
-#   elif  [[ $SHLVL -gt 1 ]]; then
-#     export ORIG_SHLVL=$SHLVL
-#   fi
-# fi;
-# # If ORIG_SHLVL is set and SHLVL is now greater: display nesting level
-# if [[ ! -z $ORIG_SHLVL && $SHLVL -gt $ORIG_SHLVL ]]; then
-#   nix_prompt=("(%F{yellow}$(($SHLVL - $ORIG_SHLVL))%f) ")
-# fi;
 
-PROMPT='${dir_info}$(git_prompt_info) ${nix_prompt}%(1j.$promptjobs.$promptnormal)'
 
 simple_prompt() {
   local prompt_color="%B"
   export PROMPT="%{$prompt_color%}$promptnormal"
 }
 
-#########
-# PROMPT
-#########
-
-setopt prompt_subst
-
-git_prompt_info() {
-  local dirstatus=" OK"
-  local dirty="%{$fg_bold[red]%} X%{$reset_color%}"
-
-  if [[ ! -z $(git status --porcelain 2> /dev/null | tail -n1) ]]; then
-    dirstatus=$dirty
-  fi
-
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || \
-  ref=$(git rev-parse --short HEAD 2> /dev/null) || return
-  echo " %{$fg_bold[green]%}${ref#refs/heads/}$dirstatus%{$reset_color%}"
-}
-
-# local dir_info_color="$fg_bold[black]"
-
-# This just sets the color to "bold".
-# Future me. Try this to see what's correct:
-#   $ print -P '%fg_bold[black] black'
-#   $ print -P '%B%F{black} black'
-#   $ print -P '%B black'
-local dir_info_color="%B"
-
-local dir_info_color_file="${HOME}/.zsh.d/dir_info_color"
-if [ -r ${dir_info_color_file} ]; then
-  source ${dir_info_color_file}
-fi
-
-local dir_info="%{$dir_info_color%}%(5~|%-1~/.../%2~|%4~)%{$reset_color%}"
-local promptnormal="φ %{$reset_color%}"
-local promptjobs="%{$fg_bold[red]%}φ %{$reset_color%}"
-
-# Show how many nested `nix shell`s we are in
-# local nix_prompt=""
-# # Set ORIG_SHLVL only if it wasn't previously set and if SHLVL > 1 and
-# # GHOSTTY_RESOURCES_DIR is not empty
-# if [[ -z $ORIG_SHLVL ]]; then
-#   if [[ -z $GHOSTTY_RESOURCES_DIR ]]; then
-#     export ORIG_SHLVL=$SHLVL
-#   elif  [[ $SHLVL -gt 1 ]]; then
-#     export ORIG_SHLVL=$SHLVL
-#   fi
-# fi;
-# # If ORIG_SHLVL is set and SHLVL is now greater: display nesting level
-# if [[ ! -z $ORIG_SHLVL && $SHLVL -gt $ORIG_SHLVL ]]; then
-#   nix_prompt=("(%F{yellow}$(($SHLVL - $ORIG_SHLVL))%f) ")
-# fi;
-
-PROMPT='${dir_info}$(git_prompt_info) ${nix_prompt}%(1j.$promptjobs.$promptnormal)'
-
-simple_prompt() {
-  local prompt_color="%B"
-  export PROMPT="%{$prompt_color%}$promptnormal"
-}
+PROMPT='$(git_prompt_info)${dir_info} $promptnormal'
 
 ########
 # ENV
@@ -401,23 +327,32 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-PQ_LIB_DIR="$(brew --prefix libpq)/lib"
+
+
+# commented the working code and replaced it with this other version
+#PQ_LIB_DIR="$(brew --prefix libpq)/lib"
+PQ_LIB_DIR="/opt/homebrew/opt/libpq/lib"
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
 
-#export JAVA_HOME=$(/usr/libexec/java_home)
+##export JAVA_HOME=$(/usr/libexec/java_home)
+##export PATH=$JAVA_HOME/bin:$PATH
+#
+#export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+##export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+##export JAVA_HOME=$(/usr/libexec/java_home -v 22)
 #export PATH=$JAVA_HOME/bin:$PATH
+#
+#commented the working code and replaced it with this other version
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
+export PATH="$JAVA_HOME/bin:$PATH"
 
-export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-#export JAVA_HOME=$(/usr/libexec/java_home -v 11)
-#export JAVA_HOME=$(/usr/libexec/java_home -v 22)
-export PATH=$JAVA_HOME/bin:$PATH
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 
-export ANDROID_HOME=/Users/blouse_man/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
-export PATH=$PATH:$ANDROID_HOME/emulator
 
 # pnpm
 export PNPM_HOME="/Users/blouse_man/Library/pnpm"
@@ -444,8 +379,54 @@ export PATH=$PATH:/opt/homebrew/bin
 #   - the correct directories to the PATH
 #   - auto-completion for the opam binary
 # This section can be safely removed at any time if needed.
-[[ ! -r '/Users/blouse_man/.opam/opam-init/init.zsh' ]] || source '/Users/blouse_man/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+#
+#
+#
+# this one works pretty good 
+#[[ ! -r '/Users/blouse_man/.opam/opam-init/init.zsh' ]] || source '/Users/blouse_man/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+#
+#
+#
+#
 # END opam configuration
+#
+#
+# alternative opam configuration
+# FAST: Lazy-load opam to speed up shell startup.
+# This function will only run once, the first time you use the `opam` command.
+if command -v opam >/dev/null; then
+  opam() {
+    # Remove this temporary wrapper function.
+    unfunction "$0"
 
-source <(fzf --zsh)
+    # Now, run the actual opam initialization script.
+    # We use ${HOME} to be more portable than a hard-coded path.
+    source "${HOME}/.opam/opam-init/init.zsh" >/dev/null 2>&1
+
+    # Finally, execute the real `opam` command with all the arguments
+    # you originally passed to it.
+    command opam "$@"
+  }
+fi
+
+#source <(fzf --zsh)
 export GPG_TTY=$(tty) # or /Users/blouse_man/.bashrc if you use bash
+
+# Added by Windsurf
+export PATH="/Users/blouse_man/.codeium/windsurf/bin:$PATH"
+export PATH="/opt/homebrew/opt/lua@5.1/bin:$PATH"
+export PATH="/opt/homebrew/Cellar/sevenzip/24.09/bin:$PATH"
+
+# Cursor
+alias c="open $1 -a \"Cursor\""
+# Visual Studio Code
+alias v="open $1 -a \"Visual Studio Code\""
+
+if command -v rbenv >/dev/null; then
+    eval "$(rbenv init - --no-rehash zsh)"
+fi
+
+
+
+# opencode
+export PATH=/Users/blouse_man/.opencode/bin:$PATH
