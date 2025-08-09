@@ -2,6 +2,25 @@ return {
     -- Package Manager
     "folke/lazy.nvim",
 
+    -- Snacks.nvim (high priority, not lazy loaded)
+    {
+        "folke/snacks.nvim",
+        priority = 1000,
+        lazy = false,
+        opts = {
+            bigfile = { enabled = true },
+            notifier = { enabled = true },
+            quickfile = { enabled = true },
+            statuscolumn = { enabled = true },
+            words = { enabled = true },
+            styles = {
+                notification = {
+                    wo = { wrap = true } -- Wrap notifications
+                }
+            }
+        },
+    },
+
     -- Sneak
     "justinmk/vim-sneak",
 
@@ -162,6 +181,7 @@ return {
                 -- Only install essential parsers at startup
                 ensure_installed = {
                     "lua", "vim", "vimdoc", "query", -- Essential for nvim
+                    "markdown", "markdown_inline", -- Essential for render-markdown
                 },
 
                 -- Install parsers synchronously (only applied to `ensure_installed`)
@@ -181,8 +201,8 @@ return {
                         end
                         return false
                     end,
-                    -- Disable additional Vim regex highlighting to avoid duplicates
-                    additional_vim_regex_highlighting = false,
+                    -- Enable additional Vim regex highlighting for markdown to support render-markdown
+                    additional_vim_regex_highlighting = { "markdown" },
                 },
 
                 indent = {
@@ -196,6 +216,15 @@ return {
                     auto_install = true,
                 })
             end, 1000)
+            
+            -- Ensure TreeSitter highlighting is enabled for markdown files
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = { "markdown" },
+                callback = function()
+                    vim.treesitter.start()
+                end,
+                desc = "Enable TreeSitter highlighting for markdown files"
+            })
         end
     },
     {
@@ -310,46 +339,72 @@ return {
         cmd = "VimBeGood",
     },
 
-    -- Copilot (manual activation only)
+    -- Copilot (Lua version with better LSP integration)
     {
-        "github/copilot.vim",
-        cmd = "Copilot", -- Only loads when :Copilot command is used
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
         config = function()
-            -- Disable auto-start and auto-suggestions
-            vim.g.copilot_enabled = false
-            vim.g.copilot_no_tab_map = true
-            vim.g.copilot_assume_mapped = true
+            require("copilot").setup({
+                panel = {
+                    enabled = true,
+                    auto_refresh = false,
+                    keymap = {
+                        jump_prev = "[[",
+                        jump_next = "]]",
+                        accept = "<CR>",
+                        refresh = "gr",
+                        open = "<M-CR>"
+                    },
+                    layout = {
+                        position = "bottom", -- | top | left | right
+                        ratio = 0.4
+                    },
+                },
+                suggestion = {
+                    enabled = true,
+                    auto_trigger = false, -- Disabled by default
+                    debounce = 75,
+                    keymap = {
+                        accept = "<M-l>",
+                        accept_word = false,
+                        accept_line = false,
+                        next = "<M-]>",
+                        prev = "<M-[>",
+                        dismiss = "<C-]>",
+                    },
+                },
+                filetypes = {
+                    yaml = false,
+                    markdown = false,
+                    help = false,
+                    gitcommit = false,
+                    gitrebase = false,
+                    hgcommit = false,
+                    svn = false,
+                    cvs = false,
+                    ["."] = false,
+                },
+                copilot_node_command = 'node', -- Node.js version must be > 18.x
+                server_opts_overrides = {},
+            })
             
             -- Create commands for manual Copilot control
             vim.api.nvim_create_user_command('CopilotEnable', function()
-                vim.g.copilot_enabled = true
-                vim.cmd('Copilot enable')
-                print("Copilot enabled")
-            end, { desc = "Enable Copilot suggestions" })
+                require('copilot.suggestion').toggle_auto_trigger()
+                print("Copilot auto-trigger enabled")
+            end, { desc = "Enable Copilot auto-trigger" })
             
             vim.api.nvim_create_user_command('CopilotDisable', function()
-                vim.g.copilot_enabled = false
-                vim.cmd('Copilot disable')
-                print("Copilot disabled")
-            end, { desc = "Disable Copilot suggestions" })
+                require('copilot.suggestion').toggle_auto_trigger()
+                print("Copilot auto-trigger disabled")
+            end, { desc = "Disable Copilot auto-trigger" })
             
             vim.api.nvim_create_user_command('CopilotToggle', function()
-                if vim.g.copilot_enabled then
-                    vim.g.copilot_enabled = false
-                    vim.cmd('Copilot disable')
-                    print("Copilot disabled")
-                else
-                    vim.g.copilot_enabled = true
-                    vim.cmd('Copilot enable')
-                    print("Copilot enabled")
-                end
-            end, { desc = "Toggle Copilot suggestions" })
-            
-            -- Optional: Add keymaps for quick access
-            -- vim.keymap.set('n', '<leader>ce', ':CopilotEnable<CR>', { desc = "Enable Copilot" })
-            -- vim.keymap.set('n', '<leader>cd', ':CopilotDisable<CR>', { desc = "Disable Copilot" })
-            -- vim.keymap.set('n', '<leader>ct', ':CopilotToggle<CR>', { desc = "Toggle Copilot" })
-        end
+                require('copilot.suggestion').toggle_auto_trigger()
+                print("Copilot auto-trigger toggled")
+            end, { desc = "Toggle Copilot auto-trigger" })
+        end,
     },
 
     -- Mason (separated from LSP for better lazy loading)
@@ -589,6 +644,17 @@ return {
         end,
     },
 
+    -- TypeScript Error Translator
+    {
+        "dmmulroy/ts-error-translator.nvim",
+        ft = { "typescript", "javascript", "typescriptreact", "javascriptreact" },
+        config = function()
+            require("ts-error-translator").setup({
+                auto_override_publish_diagnostics = true,
+            })
+        end,
+    },
+
     -- Supermaven (disabled by default to avoid conflict with Copilot)
     {
         "supermaven-inc/supermaven-nvim",
@@ -785,7 +851,6 @@ return {
             { "hrsh7th/nvim-cmp", lazy = true }, -- autocompletion for avante commands and mentions
             { "ibhagwan/fzf-lua", lazy = true }, -- for file_selector provider fzf
             { "stevearc/dressing.nvim", lazy = true }, -- for input provider dressing
-            { "folke/snacks.nvim", lazy = true }, -- for input provider snacks
             { "nvim-tree/nvim-web-devicons", lazy = true }, -- or echasnovski/mini.icons
             { "zbirenbaum/copilot.lua", lazy = true }, -- for providers='copilot'
             {
@@ -810,6 +875,8 @@ return {
                 'MeanderingProgrammer/render-markdown.nvim',
                 opts = {
                     file_types = { "markdown", "Avante" },
+                    latex = { enabled = false }, -- Disable latex support to avoid warnings
+                    html = { enabled = false },  -- Disable html support to avoid warnings
                 },
                 ft = { "markdown", "Avante" },
             },
