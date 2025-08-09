@@ -538,7 +538,8 @@ return {
             })
             
             -- Optional: Configure Pyright to defer linting/imports to Ruff
-            require('lspconfig').pyright.setup {
+            lspconfig.pyright.setup({
+              capabilities = capabilities,
               settings = {
                 pyright = {
                   -- Using Ruff's import organizer
@@ -551,7 +552,7 @@ return {
                   },
                 },
               },
-            }
+            })
         end
     },
 
