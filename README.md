@@ -1,149 +1,250 @@
 # nvim-config-super-duper-octo-fiesta
-My configuration files and tools
 
-This is tushar's configuration repo. Feel free to use whatever you would like from it! It'd be great if you mentioned where it came from if you think it's cool.
+My Neovim configuration files - clean, fast, and productive.
 
-current look
-![image](https://github.com/user-attachments/assets/4f7c9840-c9a9-4b84-becf-72588bdff009)
-in the end it will look like this (old look)
-![alt text](https://github.com/tusharxoxoxo/nvim-config-super-duper-octo-fiesta/blob/cookies/Screenshot%202023-06-22%20at%2013.51.51.jpg)
+## Preview
 
+Current setup with transparent background and rose-pine theme:
+![Current Look](https://github.com/user-attachments/assets/4f7c9840-c9a9-4b84-becf-72588bdff009)
 
+Background image for transparent terminal:
+[Waifu Background](https://github.com/tusharxoxoxo/nvim-config-super-duper-octo-fiesta/blob/cookies/sexy-anime-girl-in-space-jtrt80grfiym6iyx.jpeg)
 
-and here is the link for the background waifu photo, i have kept my nvim transparent, so this photo u need to add to your terminal background
-https://github.com/tusharxoxoxo/nvim-config-super-duper-octo-fiesta/blob/cookies/sexy-anime-girl-in-space-jtrt80grfiym6iyx.jpeg
+## Prerequisites
 
-If you like what I'm doing, consider supporting me by clicking the heart button above!
+- **Required**: [ripgrep](https://github.com/BurntSushi/ripgrep) for telescope search
+- **Recommended**: Nerd Font for better icons
+- **Optional**: tmux for enhanced workflow
 
-Major areas include:
+## Key Features
 
-Prerequisite: install [ripgrep](https://github.com/BurntSushi/ripgrep).
+- 🚀 **Fast startup** with lazy loading
+- 🎨 **Rose-pine theme** with transparent background
+- 🔍 **Telescope** for fuzzy finding
+- 🎯 **Harpoon** for quick file navigation
+- 🔧 **Modern LSP** setup with mason
+- 📝 **Smart formatting** with conform.nvim
+- 🐙 **Git integration** with fugitive and gitsigns
+- 🧠 **AI assistance** with Copilot and Supermaven
 
-## xdg_config
+## Keyboard Shortcuts
 
-This area contains the configuration I want to share between machines that will go to `$XDG_CONFIG_HOME` (generally, `~/.config`).
+_Space is the leader key_
 
-Here is a small list of shortcuts (space is my leader key)
-1. `nvim .` for opening the explorer
-2. `%` to create a new file
-3. `d` to create a new directory
-4. `:Ex` for opening the Explorer
-5. `<leader>pv` for opening the explorer
-6. `:so` to source that file
-7. a small tip for indentation: `=ap` for indenting the entire file
-8. `=` After highlighting in visual mode, this will indent the highlighted portion
-9. `:Lazy sync` for synching packages
-10. `<leader>pf` find files by typing their name
-11. `<leader>ps` this opens grep find words in the entire directory
-12. `ciw` delete the current word and go to insert mode
-13. `lua ColorMyPencils()` After doing :Lazy sync the background waifu disappears, this is to bring our waifu back
-14. `:TSPlaygroundToggle` A syntax tree, also known as a parse tree or abstract syntax tree (AST), is a hierarchical representation of the syntactic structure of a program or a piece of code. It illustrates how the various elements of the code relate to each other grammatically.
-<br/> <br/>   Harpoon shortcuts
-15. `control e` harpoon menu
-16. `<leader>a` add file to harpoon
-17. `control h` file 1 in harpoon
-18. `control t` file 2 in harpoon
-19. `control n` file 3 in Harpoon
-20. `control s` file 4 in Harpoon
+### File Explorer & Navigation
 
+| Shortcut     | Action                          |
+| ------------ | ------------------------------- |
+| `nvim .`     | Open netrw in current directory |
+| `<leader>pv` | Open file explorer              |
+| `:Ex`        | Open netrw explorer             |
+| `%`          | Create new file (in netrw)      |
+| `d`          | Create new directory (in netrw) |
 
-<br/><br/>
-21. `<leader>u` undotree toggle<br/>
-22. `control ww` for window switch (usually control w should do the window switch, but it's just not working so ww<br/>
-23. `<leader>gs` manipulate inside a git repo<br/>
+### File Finding (Telescope)
 
+| Shortcut     | Action                      |
+| ------------ | --------------------------- |
+| `<leader>pf` | Find files by name          |
+| `<C-p>`      | Find git files              |
+| `<leader>ps` | Live grep (search in files) |
+| `<leader>vh` | Help tags                   |
 
-<br/><br/>
-24. `K` and `J`, first highlight the text, then these two keys we can move up and down carrying the highlighted text<br/>
-25. `control u` for page up<br/>
-26. `control d` for page down<br/>
-27. `/something` this search something in that file<br/>
+### Harpoon (Quick Navigation)
 
+| Shortcut    | Action                      |
+| ----------- | --------------------------- |
+| `<leader>a` | Add current file to harpoon |
+| `<C-e>`     | Toggle harpoon menu         |
+| `<C-h>`     | Navigate to harpoon file 1  |
+| `<C-t>`     | Navigate to harpoon file 2  |
+| `<C-n>`     | Navigate to harpoon file 3  |
+| `<C-s>`     | Navigate to harpoon file 4  |
 
+### Text Editing & Movement
 
-<br/><br/>
-28. `n` for the next occurrence of that search thing, but for that first we need to get out of searching by pressing enter, and `shift n` or `N` to go backwards<br/>
-29. `:%s/original-name/new-name/g` here `%s` is for searching something, `/original-name` for searching this name, `/new-name` for the new name, `/g` for doing this globally<br/>
-30. `:s/original-name/new-name/g` if we only want to change the occurence of a specific word in a single line<br/>
-31. `:%s/original-name/new-name` if we want to replace all the first instance of a specific word in all the lines<br/>
-32. `:%s#/#doom#g` if we want to replace the occurence of `//` in our file then we can use a different delimiter say `#`<br/>
-33. `:s/original-name/new-name/gc` this will give u option to replace the next occurence or not, press y or n<br> <br/>
-    	
-- `y`: Yes; make this change.
-- `n`: No; skip this match.
-- `a`: All; make this change and all remaining ones without further confirmation.
-- `q`: Quit; don't make any more changes.
-- `l`: Last; make this change and then quit.
-- `CTRL-E`: Scroll the text one line up.
-- `CTRL-Y`: Scroll the text one line down.
+| Shortcut     | Action                           |
+| ------------ | -------------------------------- |
+| `J` (visual) | Move selected lines down         |
+| `K` (visual) | Move selected lines up           |
+| `<C-d>`      | Page down (centered)             |
+| `<C-u>`      | Page up (centered)               |
+| `n`          | Next search match (centered)     |
+| `N`          | Previous search match (centered) |
+| `ciw`        | Change inner word                |
+| `=ap`        | Indent entire paragraph          |
+| `=` (visual) | Indent selected lines            |
 
-35. `:.,+5s/original-name/new-name/g` a way to change the next 5 occurence of a specific word<br/>
+### Clipboard Operations
 
+| Shortcut             | Action                             | Original Command |
+| -------------------- | ---------------------------------- | ---------------- |
+| `<leader>y`          | Copy to system clipboard           | `"+y`            |
+| `<leader>Y`          | Copy line to system clipboard      | `"+Y`            |
+| `"+p`                | Paste from system clipboard        | `"+p`            |
+| `gg<leader>yG`       | Copy entire file to clipboard      | `gg"+yG`         |
+| `<leader>p` (visual) | Paste without overwriting register | `"_dP`           |
 
+### Search & Replace
 
- <br/><br/>   lsp ones<br/>
-36. `control p` select the previous item<br/>
-37. `control n` select the next item<br/>
-38. `control y` confirm, don't forget this one, it's important cause without this u will kinda hate lsp<br/>
-39. `control<leader>` complete, this one too, imp<br/>
+| Shortcut         | Action                           |
+| ---------------- | -------------------------------- |
+| `/pattern`       | Search for pattern               |
+| `<leader>s`      | Substitute word under cursor     |
+| `:%s/old/new/g`  | Replace all occurrences globally |
+| `:%s/old/new/gc` | Replace with confirmation        |
+| `:s/old/new/g`   | Replace in current line          |
 
-<br/><br/>
-40. `gd` lsp buffer definition<br/>
-41. `control o` for going back from buffer to the original file<br/>
-42. `K` Hower<br/>
-43. `vws` workspace symbols<br/>
-44. `<leader>vd` diagnostic open float<br/>
-45. `[d` diagnostic goto next<br/>
-46. `]d` diagnostic goto prev<br/>
-47. `<leader>vca` buffer code action<br/>
-48. `<leader>vrr` buffer references<br/>
-49. `<leader>vrn` buffer rename<br/>
-50. `control h` signature help<br/>
+### LSP (Language Server)
 
+| Shortcut | Action                                       |
+| -------- | -------------------------------------------- |
+| `gd`     | Go to definition                             |
+| `gr`     | Show references                              |
+| `gi`     | Go to implementation                         |
+| `go`     | Go to type definition                        |
+| `K`      | Show hover documentation                     |
+| `gs`     | Signature help                               |
+| `<F2>`   | Rename symbol                                |
+| `<F3>`   | Format code                                  |
+| `<F4>`   | Code actions                                 |
+| `<C-o>`  | Jump back                                    |
+| '<C-i>   | Jump back forward (reverse of above command) |
 
+### Completion (nvim-cmp)
 
-<br/><br/>
-51. `control v` then highlight the area/block u want to comment `shift i` to go into insert mode at the very start of the line<br/>
-    `//` and then press ESC or control [<br/>
-52. `vi"` and it will select everything within double quotes or `vi(`, the best part is it will jump the cursor before the string<br/>
-53. `"+y` to copy into clipboard from Vim editor<br/>
-    `"` says to use a register, `+` specifies the register to use (where + means the system clipboard in this case)m `y` is the yank operation<br/>
-54. `"+p` and `"+P` paste into vim from system clipboard<br/>
-55. `gg"+yG` if u r in normal mode and want to select all the content on the current file, something which we usually do via `cmd a` in our normal day to day browsing<br/>
-56. `ctrl r` to fzf zsh history<br/> 
+| Shortcut    | Action                   |
+| ----------- | ------------------------ |
+| `<C-Space>` | Trigger completion       |
+| `<Tab>`     | Next completion item     |
+| `<S-Tab>`   | Previous completion item |
+| `<CR>`      | Confirm selection        |
+| `<C-e>`     | Abort completion         |
 
+### Git Operations
 
+| Shortcut     | Action                |
+| ------------ | --------------------- |
+| `<leader>gs` | Git status (fugitive) |
+| `]c`         | Next git hunk         |
+| `[c`         | Previous git hunk     |
+| `<leader>hs` | Stage hunk            |
+| `<leader>hr` | Reset hunk            |
+| `<leader>hp` | Preview hunk          |
 
-<br/><br/>  fzf ones<br/>
-57. `fzf` for simple searching for a file in terminal<br/>
-58. `fzf --preview='cat {}'` with this we can preview different files for searching for a particular file<br/>
-59. `nvim $(fzf --preview='cat {}')` for searching a file a then opening that file in nvim<br/>
+### Utility Tools
 
-60. `diw`, `diW` are a better alternative for using multiple dw (delete word), `diw` will delete the word i am middle of, `diW` will delete the entire thing we r inside of<br/>
+| Shortcut           | Action                        |
+| ------------------ | ----------------------------- |
+| `<leader>u`        | Toggle undo tree              |
+| `<leader>mp`       | Format file (prettier/stylua) |
+| `<leader><leader>` | Source current file           |
+| `<leader>x`        | Make file executable          |
+| `:Lazy sync`       | Update plugins                |
 
-61. `<leader>f` after installing prettier using the command `bun i --save-dev prettier`, we can using prettier format using this command for formating inside the vim in a instant<br/>
+### Vim-Sneak (Enhanced Movement)
 
-<br/><br/> just added vim-sneak<br/>
-62. `s<char><char>` to search this two character combination in your entire file, and all the other additional gets lighted in beautiful pink color, which is lovely to see with naked eyes, u will be mesmerised the movement u see it<br/>
-63. `;` for going to next match of that two character sequence that u just searched or u can also do s<char><char> for repeat that again, but u would be done if u do so, like why in the world would u want to do that, r u dumb or what, just do `;`
-64. `3;` to skip to the third (3rd) match from your current<br/>
-65. `ctrl o` for going back to that starting position<br/>
-66. `s<Enter>` to repeat the last search<br/>
-67. `S` for searching backwards<br/>
+| Shortcut        | Action                         |
+| --------------- | ------------------------------ |
+| `s<char><char>` | Jump to two-character sequence |
+| `;`             | Repeat last sneak forward      |
+| `S`             | Sneak backwards                |
+| `<C-o>`         | Jump back to starting position |
 
-68. `cit` to change inside tags after deleting everthing inside those tags
-69. `dit` to delete everthing inside those tags
-70. `.` this will repeat the previous command
-71. `:set wrap` to wrap long lines
+### Special Functions
 
-there r a lot more such shortcuts, but these r what coming to my mind will definitely update this list in future<br/>
+| Shortcut               | Action                         |
+| ---------------------- | ------------------------------ |
+| `lua ColorMyPencils()` | Restore transparent background |
+| `:TSPlaygroundToggle`  | Toggle treesitter playground   |
+| `:CopilotEnable`       | Enable GitHub Copilot          |
+| `:CopilotDisable`      | Disable GitHub Copilot         |
 
+### Text Objects & Motions
 
-Subdirectories include:
+| Shortcut    | Action                    |
+| ----------- | ------------------------- |
+| `vi"`       | Select inside quotes      |
+| `vi(`       | Select inside parentheses |
+| `cit`       | Change inside HTML tags   |
+| `dit`       | Delete inside HTML tags   |
+| `.`         | Repeat last command       |
+| `:set wrap` | Enable line wrapping      |
 
-### Neovim
+### Window Management
 
-Check the `nvim` folder for configuration. For more instructions, see the README there.
+| Shortcut       | Action                 |
+| -------------- | ---------------------- |
+| `<C-w>w`       | Switch between windows |
+| `<C-w>h/j/k/l` | Navigate windows       |
+| `<C-w>s`       | Split horizontally     |
+| `<C-w>v`       | Split vertically       |
 
-> *this page was last updated on 6 Aug 2024. please contact me if you notice it is outdated, or if you would like more recent information.*
+## Go Development Shortcuts
 
+| Shortcut     | Action                           |
+| ------------ | -------------------------------- |
+| `<leader>ee` | Insert error return pattern      |
+| `<leader>ea` | Insert assert.NoError            |
+| `<leader>ef` | Insert log.Fatalf error handling |
+| `<leader>el` | Insert logger.Error pattern      |
+
+## Installation
+
+1. Backup your existing config:
+
+```bash
+mv ~/.config/nvim ~/.config/nvim.backup
+```
+
+2. Clone this config:
+
+```bash
+git clone https://github.com/tusharxoxoxo/nvim-config-super-duper-octo-fiesta ~/.config/nvim
+```
+
+3. Install ripgrep:
+
+```bash
+# macOS
+brew install ripgrep
+
+# Ubuntu/Debian
+sudo apt install ripgrep
+
+# Arch
+sudo pacman -S ripgrep
+```
+
+4. Start Neovim and let Lazy.nvim install plugins:
+
+```bash
+nvim
+```
+
+## Plugin Highlights
+
+- **lazy.nvim** - Modern plugin manager
+- **telescope.nvim** - Fuzzy finder
+- **harpoon** - Quick file navigation
+- **nvim-lspconfig** - LSP integration
+- **nvim-cmp** - Autocompletion
+- **conform.nvim** - Code formatting
+- **nvim-treesitter** - Syntax highlighting
+- **vim-fugitive** - Git integration
+- **undotree** - Undo history visualization
+- **vim-sneak** - Enhanced movement
+- **rose-pine** - Beautiful theme
+
+## Notes
+
+- The configuration uses a transparent background for terminal aesthetics
+- LSP servers are automatically installed via Mason
+- Formatting is handled by conform.nvim with prettier, stylua, and others
+- Both Copilot and Supermaven are available but disabled by default
+- All plugins are lazy-loaded for optimal startup performance
+
+---
+
+_Configuration last updated: August 2025_
+_Feel free to use and modify - attribution appreciated!_
