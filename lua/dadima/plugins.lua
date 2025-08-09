@@ -453,9 +453,9 @@ return {
                 vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, opts)
                 vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
                 vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
-                vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
-                vim.keymap.set({'n', 'x'}, '<F3>', function() vim.lsp.buf.format({async = true}) end, opts)
-                vim.keymap.set('n', '<F4>', vim.lsp.buf.code_action, opts)
+                vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+                vim.keymap.set({'n', 'x'}, '<leader>fm', function() vim.lsp.buf.format({async = true}) end, opts)
+                vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
               end,
             })
             
@@ -616,56 +616,56 @@ return {
             "leoluz/nvim-dap-go",
         },
         keys = {
-            -- Basic debugging keymaps, feel free to change to your liking!
+            -- macOS-friendly debugging keymaps
             {
-                "<F5>",
+                "<leader>dc",
                 function()
                     require("dap").continue()
                 end,
                 desc = "Debug: Start/Continue",
             },
             {
-                "<F1>",
+                "<leader>di",
                 function()
                     require("dap").step_into()
                 end,
                 desc = "Debug: Step Into",
             },
             {
-                "<F2>",
+                "<leader>do",
                 function()
                     require("dap").step_over()
                 end,
                 desc = "Debug: Step Over",
             },
             {
-                "<F3>",
+                "<leader>du",
                 function()
                     require("dap").step_out()
                 end,
                 desc = "Debug: Step Out",
             },
             {
-                "<leader>b",
+                "<leader>db",
                 function()
                     require("dap").toggle_breakpoint()
                 end,
                 desc = "Debug: Toggle Breakpoint",
             },
             {
-                "<leader>B",
+                "<leader>dB",
                 function()
                     require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
                 end,
-                desc = "Debug: Set Breakpoint",
+                desc = "Debug: Set Conditional Breakpoint",
             },
             -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
             {
-                "<F7>",
+                "<leader>dt",
                 function()
                     require("dapui").toggle()
                 end,
-                desc = "Debug: See last session result.",
+                desc = "Debug: Toggle UI",
             },
         },
         config = function()

@@ -29,7 +29,8 @@ Background image for transparent terminal:
 
 ## Keyboard Shortcuts
 
-_Space is the leader key_
+_Space is the leader key_  
+_All shortcuts are optimized for macOS and avoid system conflicts_
 
 ### File Explorer & Navigation
 
@@ -60,6 +61,8 @@ _Space is the leader key_
 | `<C-t>`     | Navigate to harpoon file 2  |
 | `<C-n>`     | Navigate to harpoon file 3  |
 | `<C-s>`     | Navigate to harpoon file 4  |
+| `<A-p>`     | Navigate to previous mark   |
+| `<A-n>`     | Navigate to next mark       |
 
 ### Text Editing & Movement
 
@@ -97,19 +100,19 @@ _Space is the leader key_
 
 ### LSP (Language Server)
 
-| Shortcut | Action                                       |
-| -------- | -------------------------------------------- |
-| `gd`     | Go to definition                             |
-| `gr`     | Show references                              |
-| `gi`     | Go to implementation                         |
-| `go`     | Go to type definition                        |
-| `K`      | Show hover documentation                     |
-| `gs`     | Signature help                               |
-| `<F2>`   | Rename symbol                                |
-| `<F3>`   | Format code                                  |
-| `<F4>`   | Code actions                                 |
-| `<C-o>`  | Jump back                                    |
-| '<C-i>   | Jump back forward (reverse of above command) |
+| Shortcut     | Action                                       |
+| ------------ | -------------------------------------------- |
+| `gd`         | Go to definition                             |
+| `gr`         | Show references                              |
+| `gi`         | Go to implementation                         |
+| `go`         | Go to type definition                        |
+| `K`          | Show hover documentation                     |
+| `gs`         | Signature help                               |
+| `<leader>rn` | Rename symbol                                |
+| `<leader>fm` | Format code                                  |
+| `<leader>ca` | Code actions                                 |
+| `<C-o>`      | Jump back                                    |
+| '<C-i>       | Jump back forward (reverse of above command) |
 
 ### Completion (nvim-cmp)
 
@@ -160,6 +163,42 @@ _Space is the leader key_
 | `:CopilotEnable`       | Enable GitHub Copilot          |
 | `:CopilotDisable`      | Disable GitHub Copilot         |
 
+### Avante AI Assistant
+
+_Space is the leader key_
+
+| Shortcut     | Action                                  |
+| ------------ | --------------------------------------- |
+| `<leader>aa` | Toggle Avante sidebar                   |
+| `<leader>ac` | Start Avante chat                       |
+| `<leader>ai` | Edit selected code with Avante (visual) |
+| `<leader>ar` | Refresh Avante                          |
+| `<leader>af` | Switch Avante sidebar focus             |
+| `co`         | Choose ours (conflict resolution)       |
+| `ct`         | Choose theirs (conflict resolution)     |
+| `ca`         | Choose all theirs (conflict resolution) |
+| `c0`         | Choose none (conflict resolution)       |
+| `cb`         | Choose both (conflict resolution)       |
+| `cc`         | Choose cursor (conflict resolution)     |
+| `]x`         | Move to previous conflict               |
+| `[x`         | Move to next conflict                   |
+| `[[`         | Jump to previous code blocks (results)  |
+| `]]`         | Jump to next code blocks (results)      |
+
+#### Avante Commands
+
+| Command                 | Description                   |
+| ----------------------- | ----------------------------- |
+| `:AvanteAsk [question]` | Ask AI about your code        |
+| `:AvanteChat`           | Start chat session with AI    |
+| `:AvanteEdit`           | Edit selected code blocks     |
+| `:AvanteFocus`          | Switch focus to/from sidebar  |
+| `:AvanteToggle`         | Toggle Avante sidebar         |
+| `:AvanteRefresh`        | Refresh all Avante windows    |
+| `:AvanteSwitchProvider` | Switch AI provider            |
+| `:AvanteShowRepoMap`    | Show repository structure map |
+| `:AvanteBuild`          | Build project dependencies    |
+
 ### Text Objects & Motions
 
 | Shortcut    | Action                    |
@@ -188,6 +227,18 @@ _Space is the leader key_
 | `<leader>ea` | Insert assert.NoError            |
 | `<leader>ef` | Insert log.Fatalf error handling |
 | `<leader>el` | Insert logger.Error pattern      |
+
+## Debugging (DAP)
+
+| Shortcut     | Action                     |
+| ------------ | -------------------------- |
+| `<leader>dc` | Start/Continue debugging   |
+| `<leader>di` | Step into                  |
+| `<leader>do` | Step over                  |
+| `<leader>du` | Step out                   |
+| `<leader>dt` | Toggle debug UI            |
+| `<leader>db` | Toggle breakpoint          |
+| `<leader>dB` | Set conditional breakpoint |
 
 ## Installation
 
@@ -234,6 +285,7 @@ nvim
 - **vim-fugitive** - Git integration
 - **undotree** - Undo history visualization
 - **vim-sneak** - Enhanced movement
+- **avante.nvim** - AI-powered code assistant
 - **rose-pine** - Beautiful theme
 
 ## Notes
@@ -242,6 +294,7 @@ nvim
 - LSP servers are automatically installed via Mason
 - Formatting is handled by conform.nvim with prettier, stylua, and others
 - Both Copilot and Supermaven are available but disabled by default
+- Avante.nvim provides AI-powered code assistance with Claude Sonnet 4 and Moonshot models
 - All plugins are lazy-loaded for optimal startup performance
 
 ---

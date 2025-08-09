@@ -78,3 +78,9 @@ vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
 
+-- Avante AI Assistant keymaps
+vim.keymap.set("n", "<leader>aa", "<cmd>AvanteToggle<cr>", { desc = "Toggle Avante sidebar" })
+vim.keymap.set("v", "<leader>ai", "<cmd>AvanteEdit<cr>", { desc = "Edit selected code with Avante" })
+vim.keymap.set("n", "<leader>ac", "<cmd>AvanteChat<cr>", { desc = "Start Avante chat" })
+vim.keymap.set("n", "<leader>ar", "<cmd>AvanteRefresh<cr>", { desc = "Refresh Avante" })
+
