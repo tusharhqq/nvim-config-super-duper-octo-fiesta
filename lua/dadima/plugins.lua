@@ -46,7 +46,14 @@ return {
                     markdown = { "prettier" },
                     liquid = { "prettier" },
                     lua = { "stylua" },
-                    python = { "isort", "black" },
+                    python = {
+                        -- To fix auto-fixable lint errors.
+                        "ruff_fix",
+                        -- To run the Ruff formatter.
+                        "ruff_format", 
+                        -- To organize the imports.
+                        "ruff_organize_imports",
+                    },
                     go = { "gofmt" },
                     rust = { "rustfmt" },
                 },
@@ -79,9 +86,9 @@ return {
                 typescript = { "eslint_d" },
                 javascriptreact = { "eslint_d" },
                 typescriptreact = { "eslint_d" },
-                python = { "pylint" },
+                python = { "ruff" },
                 lua = { "luacheck" },
-                markdown = { "markdownlint" },
+                markdown = { "markdownlint-cli2" },
                 json = { "jsonlint" },
                 yaml = { "yamllint" },
                 go = { "golangci-lint" },
@@ -121,6 +128,7 @@ return {
         "lukas-reineke/indent-blankline.nvim",
         main = "ibl",
         event = { "BufReadPost", "BufNewFile" },
+        enabled = false,  -- Disable vertical indentation lines
         opts = {},
     },
 
@@ -195,7 +203,7 @@ return {
                     -- Disable highlighting for files larger than 100KB
                     disable = function(lang, buf)
                         local max_filesize = 100 * 1024 -- 100 KB
-                        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                        local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
                         if ok and stats and stats.size > max_filesize then
                             return true
                         end
@@ -234,6 +242,7 @@ return {
     {
         "nvim-treesitter/nvim-treesitter-context",
         event = { "BufReadPost", "BufNewFile" },
+        enabled = false,  -- Disable context boxes
     },
 
     -- Navigation and Git
@@ -339,11 +348,11 @@ return {
         cmd = "VimBeGood",
     },
 
-    -- Copilot (Lua version with better LSP integration)
+    -- Copilot (Lua version with better LSP integration) - Disabled by default, Supermaven is primary
     {
         "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
+        cmd = { "Copilot", "CopilotEnable", "CopilotDisable", "CopilotToggle", "CopilotSwitch" },
+        enabled = true, -- Plugin is available but not auto-loaded
         config = function()
             require("copilot").setup({
                 panel = {
@@ -362,8 +371,8 @@ return {
                     },
                 },
                 suggestion = {
-                    enabled = true,
-                    auto_trigger = false, -- Disabled by default
+                    enabled = false, -- Disabled by default, Supermaven is primary
+                    auto_trigger = false,
                     debounce = 75,
                     keymap = {
                         accept = "<M-l>",
@@ -389,30 +398,73 @@ return {
                 server_opts_overrides = {},
             })
             
-            -- Create commands for manual Copilot control
+            -- Create commands for manual AI assistant switching
             vim.api.nvim_create_user_command('CopilotEnable', function()
-                require('copilot.suggestion').toggle_auto_trigger()
-                print("Copilot auto-trigger enabled")
-            end, { desc = "Enable Copilot auto-trigger" })
+                -- Disable Supermaven first
+                local supermaven_ok, supermaven = pcall(require, 'supermaven-nvim.api')
+                if supermaven_ok then
+                    supermaven.stop()
+                    print("Supermaven disabled")
+                end
+                
+                -- Enable Copilot
+                require('copilot.suggestion').enable()
+                local config = require('copilot.config').get()
+                if not config.suggestion.auto_trigger then
+                    require('copilot.suggestion').toggle_auto_trigger()
+                end
+                print("Copilot enabled (Supermaven disabled)")
+            end, { desc = "Switch to Copilot (disable Supermaven)" })
             
             vim.api.nvim_create_user_command('CopilotDisable', function()
-                require('copilot.suggestion').toggle_auto_trigger()
-                print("Copilot auto-trigger disabled")
-            end, { desc = "Disable Copilot auto-trigger" })
+                -- Disable Copilot
+                require('copilot.suggestion').disable()
+                local config = require('copilot.config').get()
+                if config.suggestion.auto_trigger then
+                    require('copilot.suggestion').toggle_auto_trigger()
+                end
+                print("Copilot disabled")
+            end, { desc = "Disable Copilot suggestions" })
             
             vim.api.nvim_create_user_command('CopilotToggle', function()
                 require('copilot.suggestion').toggle_auto_trigger()
-                print("Copilot auto-trigger toggled")
+                local config = require('copilot.config').get()
+                print("Copilot auto-trigger: " .. (config.suggestion.auto_trigger and "enabled" or "disabled"))
             end, { desc = "Toggle Copilot auto-trigger" })
+            
+            vim.api.nvim_create_user_command('CopilotSwitch', function()
+                -- Disable Supermaven and enable Copilot in one command
+                local supermaven_ok, supermaven = pcall(require, 'supermaven-nvim.api')
+                if supermaven_ok then
+                    supermaven.stop()
+                end
+                
+                require('copilot.suggestion').enable()
+                local config = require('copilot.config').get()
+                if not config.suggestion.auto_trigger then
+                    require('copilot.suggestion').toggle_auto_trigger()
+                end
+                print("Switched to Copilot (Supermaven stopped)")
+            end, { desc = "Switch from Supermaven to Copilot" })
         end,
     },
 
     -- Mason (separated from LSP for better lazy loading)
     {
         "williamboman/mason.nvim",
-        cmd = { "Mason", "MasonInstall", "MasonLog" },
+        lazy = false, -- Load Mason immediately to set up PATH
+        priority = 999, -- Load before LSP
         config = function()
-            require("mason").setup()
+            require("mason").setup({
+                PATH = "prepend", -- Ensure Mason's bin directory is added to PATH
+                ui = {
+                    icons = {
+                        package_installed = "✓",
+                        package_pending = "➜",
+                        package_uninstalled = "✗"
+                    }
+                }
+            })
         end
     },
 
@@ -441,6 +493,12 @@ return {
             local lspconfig_ok, lspconfig = pcall(require, 'lspconfig')
             if not lspconfig_ok then
                 return
+            end
+            
+            -- Setup Mason path resolution for LSP servers
+            local mason_registry_ok, mason_registry = pcall(require, 'mason-registry')
+            if mason_registry_ok then
+                vim.env.PATH = vim.env.PATH .. ':' .. vim.fn.stdpath('data') .. '/mason/bin'
             end
             
             local cmp_ok, cmp = pcall(require, 'cmp')
@@ -572,6 +630,17 @@ return {
                 settings = {
                   logLevel = 'info', -- Change to 'debug' if needed
                   -- logFile = '/tmp/ruff.log', -- Uncomment to set a custom log file
+                  
+                  -- Additional Ruff settings
+                  args = {}, -- Add any additional ruff arguments here if needed
+                  
+                  -- Enable/disable specific Ruff features
+                  lint = {
+                    enable = true, -- Enable linting (default: true)
+                  },
+                  format = {
+                    enable = true, -- Enable formatting (default: true)
+                  },
                 }
               }
             })
@@ -655,13 +724,54 @@ return {
         end,
     },
 
-    -- Supermaven (disabled by default to avoid conflict with Copilot)
+    -- Supermaven (primary AI assistant, enabled by default)
     {
         "supermaven-inc/supermaven-nvim",
-        enabled = true, -- Set to true if you want to use Supermaven instead of Copilot
-        event = "InsertEnter", -- Only load when entering insert mode
+        enabled = true,
+        event = "InsertEnter", -- Auto-load when entering insert mode
         config = function()
-            require("supermaven-nvim").setup({})
+            require("supermaven-nvim").setup({
+                keymaps = {
+                    accept_suggestion = "<M-l>",      -- Alt+l to accept suggestions (same as Copilot)
+                    clear_suggestion = "<M-h>",       -- Alt+h to clear suggestions 
+                    accept_word = "<M-k>",            -- Alt+k to accept word
+                },
+            })
+            
+            -- Add commands to switch back to Supermaven from Copilot
+            vim.api.nvim_create_user_command('SupermavenSwitch', function()
+                -- Disable Copilot first
+                local copilot_ok, copilot = pcall(require, 'copilot.suggestion')
+                if copilot_ok then
+                    copilot.disable()
+                    local config = require('copilot.config').get()
+                    if config.suggestion.auto_trigger then
+                        copilot.toggle_auto_trigger()
+                    end
+                end
+                
+                -- Enable/Start Supermaven
+                local supermaven_ok, supermaven = pcall(require, 'supermaven-nvim.api')
+                if supermaven_ok then
+                    supermaven.start()
+                    print("Switched to Supermaven (Copilot disabled)")
+                else
+                    print("Supermaven not available")
+                end
+            end, { desc = "Switch from Copilot to Supermaven" })
+            
+            vim.api.nvim_create_user_command('SupermavenRestart', function()
+                local supermaven_ok, supermaven = pcall(require, 'supermaven-nvim.api')
+                if supermaven_ok then
+                    supermaven.stop()
+                    vim.defer_fn(function()
+                        supermaven.start()
+                        print("Supermaven restarted")
+                    end, 500)
+                else
+                    print("Supermaven not available")
+                end
+            end, { desc = "Restart Supermaven" })
         end,
     },
 
@@ -805,81 +915,81 @@ return {
         end,
     },
 
-    -- Avante.nvim - AI-powered code assistant
-    {
-        "yetone/avante.nvim",
-        -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-        -- ⚠️ must add this setting! ! !
-        build = vim.fn.has("win32") ~= 0
-            and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
-            or "make",
-        event = "VeryLazy",
-        version = false, -- Never set this value to "*"! Never!
-        ---@module 'avante'
-        ---@type avante.Config
-        opts = {
-            -- add any opts here
-            -- for example
-            provider = "claude",
-            providers = {
-                claude = {
-                    endpoint = "https://api.anthropic.com",
-                    model = "claude-sonnet-4-20250514",
-                    timeout = 30000, -- Timeout in milliseconds
-                    extra_request_body = {
-                        temperature = 0.75,
-                        max_tokens = 20480,
-                    },
-                },
-                moonshot = {
-                    endpoint = "https://api.moonshot.ai/v1",
-                    model = "kimi-k2-0711-preview",
-                    timeout = 30000, -- Timeout in milliseconds
-                    extra_request_body = {
-                        temperature = 0.75,
-                        max_tokens = 32768,
-                    },
-                },
-            },
-        },
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "MunifTanjim/nui.nvim",
-            --- The below dependencies are optional and lazy loaded,
-            { "echasnovski/mini.pick", lazy = true }, -- for file_selector provider mini.pick
-            { "nvim-telescope/telescope.nvim", lazy = true }, -- for file_selector provider telescope
-            { "hrsh7th/nvim-cmp", lazy = true }, -- autocompletion for avante commands and mentions
-            { "ibhagwan/fzf-lua", lazy = true }, -- for file_selector provider fzf
-            { "stevearc/dressing.nvim", lazy = true }, -- for input provider dressing
-            { "nvim-tree/nvim-web-devicons", lazy = true }, -- or echasnovski/mini.icons
-            { "zbirenbaum/copilot.lua", lazy = true }, -- for providers='copilot'
-            {
-                -- support for image pasting
-                "HakonHarnes/img-clip.nvim",
-                event = "VeryLazy",
-                opts = {
-                    -- recommended settings
-                    default = {
-                        embed_image_as_base64 = false,
-                        prompt_for_file_name = false,
-                        drag_and_drop = {
-                            insert_mode = true,
-                        },
-                        -- required for Windows users
-                        use_absolute_path = true,
-                    },
-                },
-            },
-            {
-                -- Make sure to set this up properly if you have lazy=true
-                'MeanderingProgrammer/render-markdown.nvim',
-                opts = {
-                    file_types = { "markdown", "Avante" },
-                    latex = { enabled = false }, -- Disable latex support to avoid warnings
-                    html = { enabled = false },  -- Disable html support to avoid warnings
-                },
-                ft = { "markdown", "Avante" },
-            },
-        },
-    },
+    -- Avante.nvim - AI-powered code assistant (DISABLED)
+    -- {
+    --     "yetone/avante.nvim",
+    --     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    --     -- ⚠️ must add this setting! ! !
+    --     build = vim.fn.has("win32") ~= 0
+    --         and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
+    --         or "make",
+    --     event = "VeryLazy",
+    --     version = false, -- Never set this value to "*"! Never!
+    --     ---@module 'avante'
+    --     ---@type avante.Config
+    --     opts = {
+    --         -- add any opts here
+    --         -- for example
+    --         provider = "claude",
+    --         providers = {
+    --             claude = {
+    --                 endpoint = "https://api.anthropic.com",
+    --                 model = "claude-sonnet-4-20250514",
+    --                 timeout = 30000, -- Timeout in milliseconds
+    --                 extra_request_body = {
+    --                     temperature = 0.75,
+    --                     max_tokens = 20480,
+    --                 },
+    --             },
+    --             moonshot = {
+    --                 endpoint = "https://api.moonshot.ai/v1",
+    --                 model = "kimi-k2-0711-preview",
+    --                 timeout = 30000, -- Timeout in milliseconds
+    --                 extra_request_body = {
+    --                     temperature = 0.75,
+    --                     max_tokens = 32768,
+    --                 },
+    --             },
+    --         },
+    --     },
+    --     dependencies = {
+    --         "nvim-lua/plenary.nvim",
+    --         "MunifTanjim/nui.nvim",
+    --         --- The below dependencies are optional and lazy loaded,
+    --         { "echasnovski/mini.pick", lazy = true }, -- for file_selector provider mini.pick
+    --         { "nvim-telescope/telescope.nvim", lazy = true }, -- for file_selector provider telescope
+    --         { "hrsh7th/nvim-cmp", lazy = true }, -- autocompletion for avante commands and mentions
+    --         { "ibhagwan/fzf-lua", lazy = true }, -- for file_selector provider fzf
+    --         { "stevearc/dressing.nvim", lazy = true }, -- for input provider dressing
+    --         { "nvim-tree/nvim-web-devicons", lazy = true }, -- or echasnovski/mini.icons
+    --         { "zbirenbaum/copilot.lua", lazy = true }, -- for providers='copilot'
+    --         {
+    --             -- support for image pasting
+    --             "HakonHarnes/img-clip.nvim",
+    --             event = "VeryLazy",
+    --             opts = {
+    --                 -- recommended settings
+    --                 default = {
+    --                     embed_image_as_base64 = false,
+    --                     prompt_for_file_name = false,
+    --                     drag_and_drop = {
+    --                         insert_mode = true,
+    --                     },
+    --                     -- required for Windows users
+    --                     use_absolute_path = true,
+    --                 },
+    --             },
+    --         },
+    --         {
+    --             -- Make sure to set this up properly if you have lazy=true
+    --             'MeanderingProgrammer/render-markdown.nvim',
+    --             opts = {
+    --                 file_types = { "markdown", "Avante" },
+    --                 latex = { enabled = false }, -- Disable latex support to avoid warnings
+    --                 html = { enabled = false },  -- Disable html support to avoid warnings
+    --             },
+    --             ft = { "markdown", "Avante" },
+    --         },
+    --     },
+    -- },
 }

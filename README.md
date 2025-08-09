@@ -124,6 +124,16 @@ _All shortcuts are optimized for macOS and avoid system conflicts_
 | `<CR>`      | Confirm selection        |
 | `<C-e>`     | Abort completion         |
 
+### AI Code Completion (Super Maven)
+
+_Note: `<M->` means Alt key (Option key on Mac)_
+
+| Shortcut | Action                   |
+| -------- | ------------------------ |
+| `<M-l>`  | Accept AI suggestion     |
+| `<M-h>`  | Clear/dismiss suggestion |
+| `<M-k>`  | Accept next word only    |
+
 ### Git Operations
 
 | Shortcut     | Action                |
@@ -156,14 +166,22 @@ _All shortcuts are optimized for macOS and avoid system conflicts_
 
 ### Special Functions
 
-| Shortcut               | Action                         |
-| ---------------------- | ------------------------------ |
-| `lua ColorMyPencils()` | Restore transparent background |
-| `:TSPlaygroundToggle`  | Toggle treesitter playground   |
-| `:CopilotEnable`       | Enable GitHub Copilot          |
-| `:CopilotDisable`      | Disable GitHub Copilot         |
+| Shortcut               | Action                              |
+| ---------------------- | ----------------------------------- |
+| `lua ColorMyPencils()` | Restore transparent background      |
+| `:TSPlaygroundToggle`  | Toggle treesitter playground        |
+| `:CopilotSwitch`       | Switch from Supermaven to Copilot   |
+| `:CopilotEnable`       | Enable Copilot (disable Supermaven) |
+| `:CopilotDisable`      | Disable Copilot suggestions         |
+| `:CopilotToggle`       | Toggle Copilot auto-trigger         |
+| `:SupermavenSwitch`    | Switch from Copilot to Supermaven   |
+| `:SupermavenRestart`   | Restart Supermaven                  |
+| `:SupermavenStart`     | Start Super Maven                   |
+| `:SupermavenStop`      | Stop Super Maven                    |
+| `:SupermavenStatus`    | Check Super Maven status            |
+| `:SupermavenToggle`    | Toggle Super Maven on/off           |
 
-### Avante AI Assistant
+<!-- ### Avante AI Assistant (DISABLED)
 
 _Space is the leader key_
 
@@ -198,6 +216,7 @@ _Space is the leader key_
 | `:AvanteSwitchProvider` | Switch AI provider            |
 | `:AvanteShowRepoMap`    | Show repository structure map |
 | `:AvanteBuild`          | Build project dependencies    |
+-->
 
 ### Text Objects & Motions
 
@@ -285,7 +304,8 @@ nvim
 - **vim-fugitive** - Git integration
 - **undotree** - Undo history visualization
 - **vim-sneak** - Enhanced movement
-- **avante.nvim** - AI-powered code assistant
+- **supermaven-nvim** - AI-powered code completion
+<!-- - **avante.nvim** - AI-powered code assistant (DISABLED) -->
 - **rose-pine** - Beautiful theme
 
 ## Notes
@@ -293,8 +313,10 @@ nvim
 - The configuration uses a transparent background for terminal aesthetics
 - LSP servers are automatically installed via Mason
 - Formatting is handled by conform.nvim with prettier, stylua, and others
-- Both Copilot and Supermaven are available but disabled by default
-- Avante.nvim provides AI-powered code assistance with Claude Sonnet 4 and Moonshot models
+- **Supermaven is the primary AI assistant** (auto-enabled on insert mode)
+- **Copilot is available on-demand** via manual commands (`:CopilotSwitch`)
+- Both use `Alt+l` to accept suggestions for consistent muscle memory
+<!-- - Avante.nvim provides AI-powered code assistance with Claude Sonnet 4 and Moonshot models (DISABLED) -->
 - All plugins are lazy-loaded for optimal startup performance
 
 ---
