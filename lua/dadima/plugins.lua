@@ -247,17 +247,8 @@ return {
 
 				highlight = {
 					enable = true,
-					-- Disable highlighting for files larger than 100KB
-					disable = function(lang, buf)
-						local max_filesize = 100 * 1024 -- 100 KB
-						local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-						if ok and stats and stats.size > max_filesize then
-							return true
-						end
-						return false
-					end,
-					-- Enable additional Vim regex highlighting for markdown to support render-markdown
-					additional_vim_regex_highlighting = { "markdown" },
+					disable = { "markdown" },
+					-- Markdown is started by Neovim 0.12's ftplugin, so leave it to the built-in highlighter.
 				},
 
 				indent = {
@@ -272,14 +263,6 @@ return {
 				})
 			end, 1000)
 
-			-- Ensure TreeSitter highlighting is enabled for markdown files
-			vim.api.nvim_create_autocmd("FileType", {
-				pattern = { "markdown" },
-				callback = function()
-					vim.treesitter.start()
-				end,
-				desc = "Enable TreeSitter highlighting for markdown files",
-			})
 		end,
 	},
 	{

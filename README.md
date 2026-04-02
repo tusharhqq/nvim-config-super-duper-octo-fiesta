@@ -32,6 +32,8 @@ Background image for transparent terminal:
 _Space is the leader key_  
 _All shortcuts are optimized for macOS and avoid system conflicts_
 
+This README is a personal reference sheet that includes custom mappings, plugin commands, and useful built-in Vim commands.
+
 ### File Explorer & Navigation
 
 | Shortcut     | Action                          |
@@ -100,19 +102,28 @@ _All shortcuts are optimized for macOS and avoid system conflicts_
 
 ### LSP (Language Server)
 
-| Shortcut     | Action                                       |
-| ------------ | -------------------------------------------- |
-| `gd`         | Go to definition                             |
-| `gr`         | Show references                              |
-| `gi`         | Go to implementation                         |
-| `go`         | Go to type definition                        |
-| `K`          | Show hover documentation                     |
-| `gs`         | Signature help                               |
-| `<leader>rn` | Rename symbol                                |
-| `<leader>fm` | Format code                                  |
-| `<leader>ca` | Code actions                                 |
-| `<C-o>`      | Jump back                                    |
-| '<C-i>       | Jump back forward (reverse of above command) |
+| Shortcut     | Action                                          |
+| ------------ | ----------------------------------------------- |
+| `gd`         | Go to definition                                |
+| `gr`         | Show references                                 |
+| `gi`         | Go to implementation                            |
+| `go`         | Go to type definition                           |
+| `K`          | Show hover documentation                        |
+| `gs`         | Signature help                                  |
+| `<leader>rn` | Rename symbol                                   |
+| `<leader>fm` | Format code                                     |
+| `<leader>ca` | Code actions                                    |
+| `<C-o>`      | Jump back                                       |
+| `<C-i>`      | Jump forward                                    |
+
+### Diagnostics
+
+| Shortcut     | Action                |
+| ------------ | --------------------- |
+| `gl`         | Show line diagnostics |
+| `[d`         | Previous diagnostic   |
+| `]d`         | Next diagnostic       |
+| `<leader>ld` | Open diagnostics list |
 
 ### Completion (nvim-cmp)
 
@@ -137,13 +148,12 @@ _All shortcuts are optimized for macOS and avoid system conflicts_
 
 ### Utility Tools
 
-| Shortcut           | Action                        |
-| ------------------ | ----------------------------- |
-| `<leader>u`        | Toggle undo tree              |
+| Shortcut           | Action                          |
+| ------------------ | ------------------------------- |
+| `<leader>u`        | Toggle undo tree                |
 | `<leader>mp`       | Format file (oxfmt/ruff/stylua) |
-| `<leader><leader>` | Source current file           |
-| `<leader>x`        | Make file executable          |
-| `:Lazy sync`       | Update plugins                |
+| `<leader>x`        | Make file executable            |
+| `:Lazy sync`       | Update plugins                  |
 
 ### Vim-Sneak (Enhanced Movement)
 
@@ -156,10 +166,10 @@ _All shortcuts are optimized for macOS and avoid system conflicts_
 
 ### Special Functions
 
-| Shortcut               | Action                              |
-| ---------------------- | ----------------------------------- |
-| `lua ColorMyPencils()` | Restore transparent background      |
-| `:TSPlaygroundToggle`  | Toggle treesitter playground        |
+| Shortcut               | Action                         |
+| ---------------------- | ------------------------------ |
+| `lua ColorMyPencils()` | Restore transparent background |
+| `:TSPlaygroundToggle`  | Toggle treesitter playground   |
 
 <!-- ### Avante AI Assistant (DISABLED)
 
