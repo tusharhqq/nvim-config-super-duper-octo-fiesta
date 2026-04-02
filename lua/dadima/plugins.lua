@@ -10,7 +10,7 @@ return {
 		opts = {
 			bigfile = { enabled = true },
 			notifier = { enabled = true },
-			quickfile = { enabled = true },
+			quickfile = { enabled = true, exclude = { "latex", "markdown" } },
 			statuscolumn = { enabled = true },
 			words = { enabled = true },
 			styles = {
@@ -247,8 +247,17 @@ return {
 
 				highlight = {
 					enable = true,
-					disable = { "markdown" },
-					-- Markdown is started by Neovim 0.12's ftplugin, so leave it to the built-in highlighter.
+					-- Disable highlighting for files larger than 100KB
+					disable = function(lang, buf)
+						local max_filesize = 100 * 1024 -- 100 KB
+						local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+						if ok and stats and stats.size > max_filesize then
+							return true
+						end
+						return false
+					end,
+					-- Enable additional Vim regex highlighting for markdown to support render-markdown
+					additional_vim_regex_highlighting = { "markdown" },
 				},
 
 				indent = {
@@ -357,6 +366,37 @@ return {
 		keys = {
 			{ "<leader>u", "<cmd>UndotreeToggle<cr>", desc = "Toggle UndoTree" },
 		},
+		config = function()
+			local group = vim.api.nvim_create_augroup("undotree_close_fix", { clear = true })
+
+			vim.api.nvim_create_autocmd("FileType", {
+				group = group,
+				pattern = { "undotree", "diff" },
+				callback = function(args)
+					vim.schedule(function()
+						if not vim.api.nvim_buf_is_valid(args.buf) or vim.b[args.buf].isUndotreeBuffer ~= 1 then
+							return
+						end
+
+						for _, augroup in ipairs({ "Undotree_Main", "Undotree_Diff" }) do
+							local ok, autocmds = pcall(vim.api.nvim_get_autocmds, {
+								group = augroup,
+								buffer = args.buf,
+								event = { "BufEnter" },
+							})
+
+							if ok then
+								for _, autocmd in ipairs(autocmds) do
+									if autocmd.command and autocmd.command:find("exitIfLast", 1, true) then
+										vim.api.nvim_del_autocmd(autocmd.id)
+									end
+								end
+							end
+						end
+					end)
+				end,
+			})
+		end,
 	},
 	{
 		"tpope/vim-fugitive",
