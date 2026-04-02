@@ -114,7 +114,9 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 | `<leader>fm` | Format code                                     |
 | `<leader>ca` | Code actions                                    |
 | `<C-o>`      | Jump back                                       |
-| `<C-i>`      | Jump forward                                    |
+| `<C-i>`      | Jump back forward (reverse of the above command |
+
+\*note, don't change the above command action details, i have written it differently for my own convinience
 
 ### Diagnostics
 
@@ -148,12 +150,12 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 
 ### Utility Tools
 
-| Shortcut           | Action                          |
-| ------------------ | ------------------------------- |
-| `<leader>u`        | Toggle undo tree                |
-| `<leader>mp`       | Format file (oxfmt/ruff/stylua) |
-| `<leader>x`        | Make file executable            |
-| `:Lazy sync`       | Update plugins                  |
+| Shortcut     | Action                          |
+| ------------ | ------------------------------- |
+| `<leader>u`  | Toggle undo tree                |
+| `<leader>mp` | Format file (oxfmt/ruff/stylua) |
+| `<leader>x`  | Make file executable            |
+| `:Lazy sync` | Update plugins                  |
 
 ### Vim-Sneak (Enhanced Movement)
 
