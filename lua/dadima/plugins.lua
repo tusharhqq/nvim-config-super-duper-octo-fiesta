@@ -368,31 +368,53 @@ return {
 		},
 		config = function()
 			local group = vim.api.nvim_create_augroup("undotree_close_fix", { clear = true })
+			local bufenter_fixes = {
+				undotree = {
+					group = "Undotree_Main",
+					clear_events = { "BufEnter", "BufLeave" },
+					events = { "BufEnter", "BufLeave" },
+					command = "if exists('t:undotree') | let t:undotree.width = winwidth(winnr()) | endif",
+				},
+				diff = {
+					group = "Undotree_Diff",
+					clear_events = { "BufEnter" },
+					events = { "BufEnter" },
+					command = "if exists('t:undotree') && exists('t:diffpanel') && !t:undotree.IsVisible() | call t:diffpanel.Hide() | endif",
+				},
+			}
 
 			vim.api.nvim_create_autocmd("FileType", {
 				group = group,
 				pattern = { "undotree", "diff" },
 				callback = function(args)
 					vim.schedule(function()
-						if not vim.api.nvim_buf_is_valid(args.buf) or vim.b[args.buf].isUndotreeBuffer ~= 1 then
+						local fix = bufenter_fixes[args.match]
+
+						if
+							not fix
+							or not vim.api.nvim_buf_is_valid(args.buf)
+							or vim.b[args.buf].isUndotreeBuffer ~= 1
+							or vim.b[args.buf].undotreeCloseFixApplied
+						then
 							return
 						end
 
-						for _, augroup in ipairs({ "Undotree_Main", "Undotree_Diff" }) do
-							local ok, autocmds = pcall(vim.api.nvim_get_autocmds, {
-								group = augroup,
-								buffer = args.buf,
-								event = { "BufEnter" },
-							})
+						local ok = pcall(vim.api.nvim_clear_autocmds, {
+							group = fix.group,
+							buffer = args.buf,
+							event = fix.clear_events,
+						})
 
-							if ok then
-								for _, autocmd in ipairs(autocmds) do
-									if autocmd.command and autocmd.command:find("exitIfLast", 1, true) then
-										vim.api.nvim_del_autocmd(autocmd.id)
-									end
-								end
-							end
+						if not ok then
+							return
 						end
+
+						vim.b[args.buf].undotreeCloseFixApplied = true
+						vim.api.nvim_create_autocmd(fix.events, {
+							group = fix.group,
+							buffer = args.buf,
+							command = fix.command,
+						})
 					end)
 				end,
 			})
