@@ -4,6 +4,11 @@ vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 -- my remaps
 --vim.keymap.set("n", "q", ":lua vim.diagnostic.open_float()<CR>")
 
+vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Line diagnostics" })
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+vim.keymap.set("n", "<leader>ld", vim.diagnostic.setloclist, { desc = "Diagnostics list" })
+
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
@@ -83,9 +88,3 @@ end)
 -- vim.keymap.set("v", "<leader>ai", "<cmd>AvanteEdit<cr>", { desc = "Edit selected code with Avante" })
 -- vim.keymap.set("n", "<leader>ac", "<cmd>AvanteChat<cr>", { desc = "Start Avante chat" })
 -- vim.keymap.set("n", "<leader>ar", "<cmd>AvanteRefresh<cr>", { desc = "Refresh Avante" })
-
--- Super Maven AI Code Completion keymaps (configured in plugins.lua)
--- Alt+l - Accept full suggestion
--- Alt+h - Clear/dismiss suggestion  
--- Alt+k - Accept next word only
-

@@ -40,16 +40,30 @@ return {
 			local conform = require("conform")
 
 			conform.setup({
+				formatters = {
+					oxfmt = {
+						command = "oxfmt",
+						args = { "--stdin-filepath", "$FILENAME" },
+						stdin = true,
+						cwd = require("conform.util").root_file({
+							"package.json",
+							"oxfmt.json",
+							".oxfmt.json",
+							".git",
+						}),
+					},
+				},
 				formatters_by_ft = {
-					javascript = { "prettier" },
-					typescript = { "prettier" },
-					javascriptreact = { "prettier" },
-					typescriptreact = { "prettier" },
-					css = { "prettier" },
-					html = { "prettier" },
-					json = { "prettier" },
-					yaml = { "prettier" },
-					markdown = { "prettier" },
+					javascript = { "oxfmt" },
+					typescript = { "oxfmt" },
+					javascriptreact = { "oxfmt" },
+					typescriptreact = { "oxfmt" },
+					css = { "oxfmt" },
+					html = { "oxfmt" },
+					json = { "oxfmt" },
+					yaml = { "oxfmt" },
+					markdown = { "oxfmt" },
+					toml = { "taplo" },
 					liquid = { "prettier" },
 					lua = { "stylua" },
 					python = {
@@ -88,16 +102,11 @@ return {
 			local lint = require("lint")
 
 			lint.linters_by_ft = {
-				javascript = { "eslint_d" },
-				typescript = { "eslint_d" },
-				javascriptreact = { "eslint_d" },
-				typescriptreact = { "eslint_d" },
-				python = { "ruff" },
 				lua = { "luacheck" },
 				markdown = { "markdownlint-cli2" },
 				json = { "jsonlint" },
 				yaml = { "yamllint" },
-				go = { "golangci-lint" },
+				go = { "golangcilint" },
 				rust = { "clippy" },
 			}
 
@@ -108,7 +117,25 @@ return {
 				callback = function()
 					-- Only run the linter in buffers that you can modify
 					if vim.bo.modifiable then
-						lint.try_lint()
+						local ft = vim.bo.filetype
+						local names = lint.linters_by_ft[ft] or {}
+						local available = vim.tbl_filter(function(name)
+							local linter = lint.linters[name]
+							if not linter then
+								return false
+							end
+
+							local cmd = linter.cmd
+							if type(cmd) == "function" or cmd == nil then
+								return true
+							end
+
+							return vim.fn.executable(cmd) == 1
+						end, names)
+
+						if #available > 0 then
+							lint.try_lint(available)
+						end
 					end
 				end,
 			})
@@ -192,12 +219,24 @@ return {
 			require("nvim-treesitter.configs").setup({
 				-- Only install essential parsers at startup
 				ensure_installed = {
+					"bash",
+					"css",
+					"go",
+					"html",
+					"javascript",
+					"json",
 					"lua",
 					"vim",
 					"vimdoc",
-					"query", -- Essential for nvim
 					"markdown",
 					"markdown_inline", -- Essential for render-markdown
+					"python",
+					"query", -- Essential for nvim
+					"rust",
+					"toml",
+					"tsx",
+					"typescript",
+					"yaml",
 				},
 
 				-- Install parsers synchronously (only applied to `ensure_installed`)
@@ -418,107 +457,6 @@ return {
 		cmd = "VimBeGood",
 	},
 
-	-- Copilot (Lua version with better LSP integration) - Disabled by default, Supermaven is primary
-	{
-		"zbirenbaum/copilot.lua",
-		cmd = { "Copilot", "CopilotEnable", "CopilotDisable", "CopilotToggle", "CopilotSwitch" },
-		enabled = true, -- Plugin is available but not auto-loaded
-		config = function()
-			require("copilot").setup({
-				panel = {
-					enabled = true,
-					auto_refresh = false,
-					keymap = {
-						jump_prev = "[[",
-						jump_next = "]]",
-						accept = "<CR>",
-						refresh = "gr",
-						open = "<M-CR>",
-					},
-					layout = {
-						position = "bottom", -- | top | left | right
-						ratio = 0.4,
-					},
-				},
-				suggestion = {
-					enabled = false, -- Disabled by default, Supermaven is primary
-					auto_trigger = false,
-					debounce = 75,
-					keymap = {
-						accept = "<M-l>",
-						accept_word = false,
-						accept_line = false,
-						next = "<M-]>",
-						prev = "<M-[>",
-						dismiss = "<C-]>",
-					},
-				},
-				filetypes = {
-					yaml = false,
-					markdown = false,
-					help = false,
-					gitcommit = false,
-					gitrebase = false,
-					hgcommit = false,
-					svn = false,
-					cvs = false,
-					["."] = false,
-				},
-				copilot_node_command = "node", -- Node.js version must be > 18.x
-				server_opts_overrides = {},
-			})
-
-			-- Create commands for manual AI assistant switching
-			vim.api.nvim_create_user_command("CopilotEnable", function()
-				-- Disable Supermaven first
-				local supermaven_ok, supermaven = pcall(require, "supermaven-nvim.api")
-				if supermaven_ok then
-					supermaven.stop()
-					print("Supermaven disabled")
-				end
-
-				-- Enable Copilot
-				require("copilot.suggestion").enable()
-				local config = require("copilot.config").get()
-				if not config.suggestion.auto_trigger then
-					require("copilot.suggestion").toggle_auto_trigger()
-				end
-				print("Copilot enabled (Supermaven disabled)")
-			end, { desc = "Switch to Copilot (disable Supermaven)" })
-
-			vim.api.nvim_create_user_command("CopilotDisable", function()
-				-- Disable Copilot
-				require("copilot.suggestion").disable()
-				local config = require("copilot.config").get()
-				if config.suggestion.auto_trigger then
-					require("copilot.suggestion").toggle_auto_trigger()
-				end
-				print("Copilot disabled")
-			end, { desc = "Disable Copilot suggestions" })
-
-			vim.api.nvim_create_user_command("CopilotToggle", function()
-				require("copilot.suggestion").toggle_auto_trigger()
-				local config = require("copilot.config").get()
-				print("Copilot auto-trigger: " .. (config.suggestion.auto_trigger and "enabled" or "disabled"))
-			end, { desc = "Toggle Copilot auto-trigger" })
-
-			vim.api.nvim_create_user_command("CopilotSwitch", function()
-				-- Disable Supermaven and enable Copilot in one command
-				local supermaven_ok, supermaven = pcall(require, "supermaven-nvim.api")
-				if supermaven_ok then
-					supermaven.stop()
-				end
-
-				require("copilot.suggestion").enable()
-				local config = require("copilot.config").get()
-				if not config.suggestion.auto_trigger then
-					require("copilot.suggestion").toggle_auto_trigger()
-				end
-				print("Switched to Copilot (Supermaven stopped)")
-			end, { desc = "Switch from Supermaven to Copilot" })
-		end,
-	},
-
 	-- Mason (separated from LSP for better lazy loading)
 	{
 		"williamboman/mason.nvim",
@@ -559,12 +497,6 @@ return {
 			},
 		},
 		config = function()
-			-- Only setup LSP if packages are available (lazy loaded)
-			local lspconfig_ok, lspconfig = pcall(require, "lspconfig")
-			if not lspconfig_ok then
-				return
-			end
-
 			-- Setup Mason path resolution for LSP servers
 			local mason_registry_ok, mason_registry = pcall(require, "mason-registry")
 			if mason_registry_ok then
@@ -638,7 +570,16 @@ return {
 					vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, opts)
 					vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 					vim.keymap.set({ "n", "x" }, "<leader>fm", function()
-						vim.lsp.buf.format({ async = true })
+						local conform_ok, conform = pcall(require, "conform")
+						if conform_ok then
+							conform.format({
+								async = true,
+								lsp_fallback = true,
+								timeout_ms = 1000,
+							})
+						else
+							vim.lsp.buf.format({ async = true })
+						end
 					end, opts)
 					vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 				end,
@@ -653,9 +594,10 @@ return {
 							"lua_ls",
 							"rust_analyzer",
 							"gopls",
-							"ts_ls",
-							"pyright",
+							"oxlint",
 							"ruff",
+							"tsgo",
+							"ty",
 						},
 						automatic_installation = true,
 					})
@@ -671,8 +613,8 @@ return {
 				capabilities = vim.lsp.protocol.make_client_capabilities()
 			end
 
-			-- Setup individual LSP servers
-			lspconfig.lua_ls.setup({
+			-- Setup individual LSP servers using vim.lsp.config (replaces deprecated require('lspconfig'))
+			vim.lsp.config("lua_ls", {
 				capabilities = capabilities,
 				settings = {
 					Lua = {
@@ -682,21 +624,30 @@ return {
 					},
 				},
 			})
+			vim.lsp.enable("lua_ls", true)
 
-			lspconfig.rust_analyzer.setup({
+			vim.lsp.config("rust_analyzer", {
 				capabilities = capabilities,
 			})
+			vim.lsp.enable("rust_analyzer", true)
 
-			lspconfig.gopls.setup({
+			vim.lsp.config("gopls", {
 				capabilities = capabilities,
 			})
+			vim.lsp.enable("gopls", true)
 
-			lspconfig.ts_ls.setup({
+			vim.lsp.config("tsgo", {
 				capabilities = capabilities,
 			})
+			vim.lsp.enable("tsgo", true)
+
+			vim.lsp.config("oxlint", {
+				capabilities = capabilities,
+			})
+			vim.lsp.enable("oxlint", true)
 
 			-- Ruff setup (new ruff server replaces ruff_lsp)
-			lspconfig.ruff.setup({
+			vim.lsp.config("ruff", {
 				capabilities = capabilities,
 				init_options = {
 					settings = {
@@ -716,8 +667,9 @@ return {
 					},
 				},
 			})
+			vim.lsp.enable("ruff", true)
 
-			-- Disable Ruff's hover if using Pyright for hover
+			-- Disable Ruff's hover if using ty for hover and completions
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
 				callback = function(args)
@@ -726,29 +678,17 @@ return {
 						return
 					end
 					if client.name == "ruff" then
-						-- Disable hover in favor of Pyright
+						-- Disable hover in favor of ty
 						client.server_capabilities.hoverProvider = false
 					end
 				end,
 				desc = "LSP: Disable hover capability from Ruff",
 			})
 
-			-- Optional: Configure Pyright to defer linting/imports to Ruff
-			lspconfig.pyright.setup({
+			vim.lsp.config("ty", {
 				capabilities = capabilities,
-				settings = {
-					pyright = {
-						-- Using Ruff's import organizer
-						disableOrganizeImports = true,
-					},
-					python = {
-						analysis = {
-							-- Ignore all files for analysis to exclusively use Ruff for linting
-							ignore = { "*" },
-						},
-					},
-				},
 			})
+			vim.lsp.enable("ty", true)
 		end,
 	},
 
@@ -793,57 +733,6 @@ return {
 			require("ts-error-translator").setup({
 				auto_override_publish_diagnostics = true,
 			})
-		end,
-	},
-
-	-- Supermaven (primary AI assistant, enabled by default)
-	{
-		"supermaven-inc/supermaven-nvim",
-		enabled = true,
-		event = "InsertEnter", -- Auto-load when entering insert mode
-		config = function()
-			require("supermaven-nvim").setup({
-				keymaps = {
-					accept_suggestion = "<M-l>", -- Alt+l to accept suggestions (same as Copilot)
-					clear_suggestion = "<M-h>", -- Alt+h to clear suggestions
-					accept_word = "<M-k>", -- Alt+k to accept word
-				},
-			})
-
-			-- Add commands to switch back to Supermaven from Copilot
-			vim.api.nvim_create_user_command("SupermavenSwitch", function()
-				-- Disable Copilot first
-				local copilot_ok, copilot = pcall(require, "copilot.suggestion")
-				if copilot_ok then
-					copilot.disable()
-					local config = require("copilot.config").get()
-					if config.suggestion.auto_trigger then
-						copilot.toggle_auto_trigger()
-					end
-				end
-
-				-- Enable/Start Supermaven
-				local supermaven_ok, supermaven = pcall(require, "supermaven-nvim.api")
-				if supermaven_ok then
-					supermaven.start()
-					print("Switched to Supermaven (Copilot disabled)")
-				else
-					print("Supermaven not available")
-				end
-			end, { desc = "Switch from Copilot to Supermaven" })
-
-			vim.api.nvim_create_user_command("SupermavenRestart", function()
-				local supermaven_ok, supermaven = pcall(require, "supermaven-nvim.api")
-				if supermaven_ok then
-					supermaven.stop()
-					vim.defer_fn(function()
-						supermaven.start()
-						print("Supermaven restarted")
-					end, 500)
-				else
-					print("Supermaven not available")
-				end
-			end, { desc = "Restart Supermaven" })
 		end,
 	},
 
@@ -1034,7 +923,6 @@ return {
 	--         { "ibhagwan/fzf-lua", lazy = true }, -- for file_selector provider fzf
 	--         { "stevearc/dressing.nvim", lazy = true }, -- for input provider dressing
 	--         { "nvim-tree/nvim-web-devicons", lazy = true }, -- or echasnovski/mini.icons
-	--         { "zbirenbaum/copilot.lua", lazy = true }, -- for providers='copilot'
 	--         {
 	--             -- support for image pasting
 	--             "HakonHarnes/img-clip.nvim",
@@ -1185,4 +1073,3 @@ return {
 	--     end,
 	-- },
 }
-

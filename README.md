@@ -23,9 +23,9 @@ Background image for transparent terminal:
 - 🔍 **Telescope** for fuzzy finding
 - 🎯 **Harpoon** for quick file navigation
 - 🔧 **Modern LSP** setup with mason
-- 📝 **Smart formatting** with conform.nvim
+- 📝 **Smart formatting** with conform.nvim plus Oxc and Ruff
 - 🐙 **Git integration** with fugitive and gitsigns
-- 🧠 **AI assistance** with Copilot and Supermaven
+- ⚡ **Modern JS/Python tooling** with VoidZero and Astral
 
 ## Keyboard Shortcuts
 
@@ -124,16 +124,6 @@ _All shortcuts are optimized for macOS and avoid system conflicts_
 | `<CR>`      | Confirm selection        |
 | `<C-e>`     | Abort completion         |
 
-### AI Code Completion (Super Maven)
-
-_Note: `<M->` means Alt key (Option key on Mac)_
-
-| Shortcut | Action                   |
-| -------- | ------------------------ |
-| `<M-l>`  | Accept AI suggestion     |
-| `<M-h>`  | Clear/dismiss suggestion |
-| `<M-k>`  | Accept next word only    |
-
 ### Git Operations
 
 | Shortcut     | Action                |
@@ -150,7 +140,7 @@ _Note: `<M->` means Alt key (Option key on Mac)_
 | Shortcut           | Action                        |
 | ------------------ | ----------------------------- |
 | `<leader>u`        | Toggle undo tree              |
-| `<leader>mp`       | Format file (prettier/stylua) |
+| `<leader>mp`       | Format file (oxfmt/ruff/stylua) |
 | `<leader><leader>` | Source current file           |
 | `<leader>x`        | Make file executable          |
 | `:Lazy sync`       | Update plugins                |
@@ -170,16 +160,6 @@ _Note: `<M->` means Alt key (Option key on Mac)_
 | ---------------------- | ----------------------------------- |
 | `lua ColorMyPencils()` | Restore transparent background      |
 | `:TSPlaygroundToggle`  | Toggle treesitter playground        |
-| `:CopilotSwitch`       | Switch from Supermaven to Copilot   |
-| `:CopilotEnable`       | Enable Copilot (disable Supermaven) |
-| `:CopilotDisable`      | Disable Copilot suggestions         |
-| `:CopilotToggle`       | Toggle Copilot auto-trigger         |
-| `:SupermavenSwitch`    | Switch from Copilot to Supermaven   |
-| `:SupermavenRestart`   | Restart Supermaven                  |
-| `:SupermavenStart`     | Start Super Maven                   |
-| `:SupermavenStop`      | Stop Super Maven                    |
-| `:SupermavenStatus`    | Check Super Maven status            |
-| `:SupermavenToggle`    | Toggle Super Maven on/off           |
 
 <!-- ### Avante AI Assistant (DISABLED)
 
@@ -304,7 +284,6 @@ nvim
 - **vim-fugitive** - Git integration
 - **undotree** - Undo history visualization
 - **vim-sneak** - Enhanced movement
-- **supermaven-nvim** - AI-powered code completion
 <!-- - **avante.nvim** - AI-powered code assistant (DISABLED) -->
 - **rose-pine** - Beautiful theme
 
@@ -312,14 +291,13 @@ nvim
 
 - The configuration uses a transparent background for terminal aesthetics
 - LSP servers are automatically installed via Mason
-- Formatting is handled by conform.nvim with prettier, stylua, and others
-- **Supermaven is the primary AI assistant** (auto-enabled on insert mode)
-- **Copilot is available on-demand** via manual commands (`:CopilotSwitch`)
-- Both use `Alt+l` to accept suggestions for consistent muscle memory
+- Formatting is handled by conform.nvim with `oxfmt`, Ruff, Stylua, and others
+- JavaScript/TypeScript use `tsgo` for LSP and `oxlint`/`oxfmt` for linting and formatting
+- Python uses Ruff plus `ty` for fast linting, formatting, imports, and language features
 <!-- - Avante.nvim provides AI-powered code assistance with Claude Sonnet 4 and Moonshot models (DISABLED) -->
 - All plugins are lazy-loaded for optimal startup performance
 
 ---
 
-_Configuration last updated: August 2025_
+_Configuration last updated: March 2026_
 _Feel free to use and modify - attribution appreciated!_
