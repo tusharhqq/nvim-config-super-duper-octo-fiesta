@@ -25,7 +25,7 @@ return {
 	{
 		"sourcegraph/amp.nvim",
 		branch = "main",
-		lazy = false,
+		event = "VeryLazy",
 		opts = { auto_start = true, log_level = "info" },
 	},
 
@@ -523,6 +523,67 @@ return {
 
 	-- LSP (modernized setup without lsp-zero)
 	{
+		"hrsh7th/nvim-cmp",
+		event = "InsertEnter",
+		dependencies = {
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-nvim-lua",
+		},
+		config = function()
+			local cmp = require("cmp")
+
+			cmp.setup({
+				sources = {
+					{ name = "nvim_lsp" },
+					{ name = "buffer" },
+					{ name = "path" },
+				},
+				snippet = {
+					expand = function(args)
+						local luasnip_ok, luasnip = pcall(require, "luasnip")
+						if luasnip_ok then
+							luasnip.lsp_expand(args.body)
+						end
+					end,
+				},
+				mapping = cmp.mapping.preset.insert({
+					["<C-b>"] = cmp.mapping.scroll_docs(-4),
+					["<C-f>"] = cmp.mapping.scroll_docs(4),
+					["<C-Space>"] = cmp.mapping.complete(),
+					["<C-e>"] = cmp.mapping.abort(),
+					["<CR>"] = cmp.mapping.confirm({ select = true }),
+					["<Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_next_item()
+						else
+							local luasnip_ok, luasnip = pcall(require, "luasnip")
+							if luasnip_ok and luasnip.expand_or_jumpable() then
+								luasnip.expand_or_jump()
+							else
+								fallback()
+							end
+						end
+					end, { "i", "s" }),
+					["<S-Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_prev_item()
+						else
+							local luasnip_ok, luasnip = pcall(require, "luasnip")
+							if luasnip_ok and luasnip.jumpable(-1) then
+								luasnip.jump(-1)
+							else
+								fallback()
+							end
+						end
+					end, { "i", "s" }),
+				}),
+			})
+		end,
+	},
+
+	{
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
@@ -530,75 +591,12 @@ return {
 				"williamboman/mason-lspconfig.nvim",
 				event = { "BufReadPre", "BufNewFile" },
 			},
-			{
-				"hrsh7th/nvim-cmp",
-				event = "InsertEnter",
-				dependencies = {
-					"hrsh7th/cmp-buffer",
-					"hrsh7th/cmp-path",
-					"hrsh7th/cmp-nvim-lsp",
-					"hrsh7th/cmp-nvim-lua",
-				},
-			},
 		},
 		config = function()
 			-- Setup Mason path resolution for LSP servers
 			local mason_registry_ok, mason_registry = pcall(require, "mason-registry")
 			if mason_registry_ok then
 				vim.env.PATH = vim.env.PATH .. ":" .. vim.fn.stdpath("data") .. "/mason/bin"
-			end
-
-			local cmp_ok, cmp = pcall(require, "cmp")
-
-			-- Setup nvim-cmp only if available
-			if cmp_ok then
-				cmp.setup({
-					sources = {
-						{ name = "nvim_lsp" },
-						{ name = "buffer" },
-						{ name = "path" },
-					},
-					snippet = {
-						expand = function(args)
-							-- Only use LuaSnip if it's loaded, otherwise no snippets
-							local luasnip_ok, luasnip = pcall(require, "luasnip")
-							if luasnip_ok then
-								luasnip.lsp_expand(args.body)
-							end
-						end,
-					},
-					mapping = cmp.mapping.preset.insert({
-						["<C-b>"] = cmp.mapping.scroll_docs(-4),
-						["<C-f>"] = cmp.mapping.scroll_docs(4),
-						["<C-Space>"] = cmp.mapping.complete(),
-						["<C-e>"] = cmp.mapping.abort(),
-						["<CR>"] = cmp.mapping.confirm({ select = true }),
-						["<Tab>"] = cmp.mapping(function(fallback)
-							if cmp.visible() then
-								cmp.select_next_item()
-							else
-								local luasnip_ok, luasnip = pcall(require, "luasnip")
-								if luasnip_ok and luasnip.expand_or_jumpable() then
-									luasnip.expand_or_jump()
-								else
-									fallback()
-								end
-							end
-						end, { "i", "s" }),
-						["<S-Tab>"] = cmp.mapping(function(fallback)
-							if cmp.visible() then
-								cmp.select_prev_item()
-							else
-								local luasnip_ok, luasnip = pcall(require, "luasnip")
-								if luasnip_ok and luasnip.jumpable(-1) then
-									luasnip.jump(-1)
-								else
-									fallback()
-								end
-							end
-						end, { "i", "s" }),
-					}),
-				})
 			end
 
 			vim.opt.signcolumn = "yes"
