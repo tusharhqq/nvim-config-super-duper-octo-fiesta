@@ -141,6 +141,7 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 
 | Shortcut     | Action                |
 | ------------ | --------------------- |
+| `<leader>gg` | Open LazyGit (`q` to exit) |
 | `<leader>gs` | Git status (fugitive) |
 | `]c`         | Next git hunk         |
 | `[c`         | Previous git hunk     |
@@ -296,7 +297,6 @@ nvim
 - **vim-fugitive** - Git integration
 - **undotree** - Undo history visualization
 - **vim-sneak** - Enhanced movement
-<!-- - **avante.nvim** - AI-powered code assistant (DISABLED) -->
 - **rose-pine** - Beautiful theme
 
 ## Notes

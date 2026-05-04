@@ -10,7 +10,9 @@ return {
 		opts = {
 			bigfile = { enabled = true },
 			notifier = { enabled = true },
-			quickfile = { enabled = true, exclude = { "latex", "markdown" } },
+			-- Disabled: quickfile starts Treesitter very early and can crash on some
+			-- markdown files before our Treesitter markdown exclusions apply.
+			quickfile = { enabled = false },
 			statuscolumn = { enabled = true },
 			words = { enabled = true },
 			styles = {
@@ -21,13 +23,6 @@ return {
 		},
 	},
 
-	-- amp
-	{
-		"sourcegraph/amp.nvim",
-		branch = "main",
-		event = "VeryLazy",
-		opts = { auto_start = true, log_level = "info" },
-	},
 
 	-- Sneak
 	"justinmk/vim-sneak",
@@ -62,31 +57,37 @@ return {
 					html = { "oxfmt" },
 					json = { "oxfmt" },
 					yaml = { "oxfmt" },
-					markdown = { "oxfmt" },
-					toml = { "taplo" },
-					liquid = { "prettier" },
+					toml = { "oxfmt" },
 					lua = { "stylua" },
 					python = {
 						-- To fix auto-fixable lint errors.
 						"ruff_fix",
-						-- To run the Ruff formatter.
-						"ruff_format",
 						-- To organize the imports.
 						"ruff_organize_imports",
+						-- To run the Ruff formatter after fixes/import changes.
+						"ruff_format",
 					},
 					go = { "gofmt" },
 					rust = { "rustfmt" },
 				},
-				format_on_save = {
-					lsp_fallback = true,
-					async = false,
-					timeout_ms = 1000,
-				},
+				format_on_save = function(bufnr)
+					-- Markdown formatting has been noisy/error-prone here; keep manual
+					-- formatting available via <leader>mp, but never run it on save.
+					if vim.bo[bufnr].filetype == "markdown" then
+						return nil
+					end
+
+					return {
+						lsp_format = "fallback",
+						async = false,
+						timeout_ms = 1000,
+					}
+				end,
 			})
 
 			vim.keymap.set({ "n", "v" }, "<leader>mp", function()
 				conform.format({
-					lsp_fallback = true,
+					lsp_format = "fallback",
 					async = false,
 					timeout_ms = 1000,
 				})
@@ -103,16 +104,19 @@ return {
 
 			lint.linters_by_ft = {
 				lua = { "luacheck" },
-				markdown = { "markdownlint-cli2" },
 				json = { "jsonlint" },
 				yaml = { "yamllint" },
 				go = { "golangcilint" },
-				rust = { "clippy" },
+				-- Rust diagnostics are handled by rust-analyzer. Running clippy
+				-- automatically on every Rust buffer open is slow and noisy because
+				-- nvim-lint's clippy linter shells out to `cargo clippy`.
+				-- Run `cargo clippy` manually when you want full project linting.
+				-- rust = { "clippy" },
 			}
 
 			-- Create autocommand which carries out the actual linting
 			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
-			vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+			vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 				group = lint_augroup,
 				callback = function()
 					-- Only run the linter in buffers that you can modify
@@ -228,8 +232,6 @@ return {
 					"lua",
 					"vim",
 					"vimdoc",
-					"markdown",
-					"markdown_inline", -- Essential for render-markdown
 					"python",
 					"query", -- Essential for nvim
 					"rust",
@@ -247,8 +249,13 @@ return {
 
 				highlight = {
 					enable = true,
-					-- Disable highlighting for files larger than 100KB
+					-- Markdown Treesitter is unstable on some files in this setup; use
+					-- Neovim's regular markdown syntax highlighting instead.
 					disable = function(lang, buf)
+						if lang == "markdown" or lang == "markdown_inline" then
+							return true
+						end
+
 						local max_filesize = 100 * 1024 -- 100 KB
 						local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
 						if ok and stats and stats.size > max_filesize then
@@ -256,13 +263,11 @@ return {
 						end
 						return false
 					end,
-					-- Enable additional Vim regex highlighting for markdown to support render-markdown
-					additional_vim_regex_highlighting = { "markdown" },
 				},
 
 				indent = {
 					enable = true,
-					disable = { "c", "cpp" },
+					disable = { "c", "cpp", "markdown" },
 				},
 			})
 
@@ -440,6 +445,24 @@ return {
 		},
 		keys = {
 			{ "<leader>gs", "<cmd>Git<cr>", desc = "Git status" },
+			{
+				"<leader>gg",
+				function()
+					vim.cmd("tabnew")
+					local win = vim.api.nvim_get_current_win()
+					vim.fn.termopen("lazygit", {
+						on_exit = function()
+							vim.schedule(function()
+								if vim.api.nvim_win_is_valid(win) then
+									vim.api.nvim_win_close(win, true)
+								end
+							end)
+						end,
+					})
+					vim.cmd("startinsert")
+				end,
+				desc = "LazyGit",
+			},
 		},
 	},
 	{
@@ -519,6 +542,33 @@ return {
 					},
 				},
 			})
+
+			local ok, registry = pcall(require, "mason-registry")
+			if not ok then
+				return
+			end
+
+			local tools = {
+				"stylua",
+				"luacheck",
+				"jsonlint",
+				"yamllint",
+			}
+
+			local function ensure_tools_installed()
+				for _, tool in ipairs(tools) do
+					local pkg_ok, pkg = pcall(registry.get_package, tool)
+					if pkg_ok and not pkg:is_installed() then
+						pkg:install()
+					end
+				end
+			end
+
+			if registry.refresh then
+				registry.refresh(ensure_tools_installed)
+			else
+				ensure_tools_installed()
+			end
 		end,
 	},
 
@@ -618,7 +668,7 @@ return {
 						if conform_ok then
 							conform.format({
 								async = true,
-								lsp_fallback = true,
+								lsp_format = "fallback",
 								timeout_ms = 1000,
 							})
 						else
@@ -919,83 +969,6 @@ return {
 			})
 		end,
 	},
-
-	-- Avante.nvim - AI-powered code assistant (DISABLED)
-	-- {
-	--     "yetone/avante.nvim",
-	--     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-	--     -- ⚠️ must add this setting! ! !
-	--     build = vim.fn.has("win32") ~= 0
-	--         and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
-	--         or "make",
-	--     event = "VeryLazy",
-	--     version = false, -- Never set this value to "*"! Never!
-	--     ---@module 'avante'
-	--     ---@type avante.Config
-	--     opts = {
-	--         -- add any opts here
-	--         -- for example
-	--         provider = "claude",
-	--         providers = {
-	--             claude = {
-	--                 endpoint = "https://api.anthropic.com",
-	--                 model = "claude-sonnet-4-20250514",
-	--                 timeout = 30000, -- Timeout in milliseconds
-	--                 extra_request_body = {
-	--                     temperature = 0.75,
-	--                     max_tokens = 20480,
-	--                 },
-	--             },
-	--             moonshot = {
-	--                 endpoint = "https://api.moonshot.ai/v1",
-	--                 model = "kimi-k2-0711-preview",
-	--                 timeout = 30000, -- Timeout in milliseconds
-	--                 extra_request_body = {
-	--                     temperature = 0.75,
-	--                     max_tokens = 32768,
-	--                 },
-	--             },
-	--         },
-	--     },
-	--     dependencies = {
-	--         "nvim-lua/plenary.nvim",
-	--         "MunifTanjim/nui.nvim",
-	--         --- The below dependencies are optional and lazy loaded,
-	--         { "echasnovski/mini.pick", lazy = true }, -- for file_selector provider mini.pick
-	--         { "nvim-telescope/telescope.nvim", lazy = true }, -- for file_selector provider telescope
-	--         { "hrsh7th/nvim-cmp", lazy = true }, -- autocompletion for avante commands and mentions
-	--         { "ibhagwan/fzf-lua", lazy = true }, -- for file_selector provider fzf
-	--         { "stevearc/dressing.nvim", lazy = true }, -- for input provider dressing
-	--         { "nvim-tree/nvim-web-devicons", lazy = true }, -- or echasnovski/mini.icons
-	--         {
-	--             -- support for image pasting
-	--             "HakonHarnes/img-clip.nvim",
-	--             event = "VeryLazy",
-	--             opts = {
-	--                 -- recommended settings
-	--                 default = {
-	--                     embed_image_as_base64 = false,
-	--                     prompt_for_file_name = false,
-	--                     drag_and_drop = {
-	--                         insert_mode = true,
-	--                     },
-	--                     -- required for Windows users
-	--                     use_absolute_path = true,
-	--                 },
-	--             },
-	--         },
-	--         {
-	--             -- Make sure to set this up properly if you have lazy=true
-	--             'MeanderingProgrammer/render-markdown.nvim',
-	--             opts = {
-	--                 file_types = { "markdown", "Avante" },
-	--                 latex = { enabled = false }, -- Disable latex support to avoid warnings
-	--                 html = { enabled = false },  -- Disable html support to avoid warnings
-	--             },
-	--             ft = { "markdown", "Avante" },
-	--         },
-	--     },
-	-- },
 
 	-- Parrot.nvim - AI-powered assistant (DISABLED)
 	-- {
