@@ -221,6 +221,10 @@ return {
 		build = ":TSUpdate",
 		config = function()
 			require("nvim-treesitter.configs").setup({
+				-- Never install Markdown parsers here; this config intentionally uses
+				-- Vim's regex markdown syntax because the TS parsers crash on Nvim 0.12.x.
+				ignore_install = { "markdown", "markdown_inline" },
+
 				-- Only install essential parsers at startup
 				ensure_installed = {
 					"bash",
@@ -271,13 +275,8 @@ return {
 				},
 			})
 
-			-- Enable auto-install after startup delay to avoid slowing down startup
-			vim.defer_fn(function()
-				require("nvim-treesitter.configs").setup({
-					auto_install = true,
-				})
-			end, 1000)
-
+			-- Keep auto_install disabled. Re-enabling it can reinstall/start Markdown
+			-- parsers via injections and bring back the .md crash.
 		end,
 	},
 	{

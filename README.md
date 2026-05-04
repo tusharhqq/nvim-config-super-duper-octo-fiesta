@@ -5,9 +5,11 @@ My Neovim configuration files - clean, fast, and productive.
 ## Preview
 
 Current setup with transparent background and rose-pine theme:
+
 ![Current Look](https://github.com/user-attachments/assets/4f7c9840-c9a9-4b84-becf-72588bdff009)
 
 Background image for transparent terminal:
+
 [Waifu Background](https://github.com/tusharxoxoxo/nvim-config-super-duper-octo-fiesta/blob/cookies/sexy-anime-girl-in-space-jtrt80grfiym6iyx.jpeg)
 
 ## Prerequisites
@@ -18,14 +20,14 @@ Background image for transparent terminal:
 
 ## Key Features
 
-- 🚀 **Fast startup** with lazy loading
-- 🎨 **Rose-pine theme** with transparent background
-- 🔍 **Telescope** for fuzzy finding
-- 🎯 **Harpoon** for quick file navigation
-- 🔧 **Modern LSP** setup with mason
-- 📝 **Smart formatting** with conform.nvim plus Oxc and Ruff
-- 🐙 **Git integration** with fugitive and gitsigns
-- ⚡ **Modern JS/Python tooling** with VoidZero and Astral
+- **Fast startup** with lazy loading
+- **Rose-pine theme** with transparent background
+- **Telescope** for fuzzy finding
+- **Harpoon** for quick file navigation
+- **Modern LSP** setup with mason
+- **Smart formatting** with conform.nvim plus Oxc and Ruff
+- **Git integration** with fugitive and gitsigns
+- **Modern JS/Python tooling** with VoidZero and Astral
 
 ## Keyboard Shortcuts
 
@@ -36,143 +38,143 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 
 ### File Explorer & Navigation
 
-| Shortcut     | Action                          |
-| ------------ | ------------------------------- |
-| `nvim .`     | Open netrw in current directory |
-| `<leader>pv` | Open file explorer              |
-| `:Ex`        | Open netrw explorer             |
-| `%`          | Create new file (in netrw)      |
-| `d`          | Create new directory (in netrw) |
+| Shortcut | Action |
+|---|---|
+| `nvim .` | Open netrw in current directory |
+| `<leader>pv` | Open file explorer |
+| `:Ex` | Open netrw explorer |
+| `%` | Create new file (in netrw) |
+| `d` | Create new directory (in netrw) |
 
 ### File Finding (Telescope)
 
-| Shortcut     | Action                      |
-| ------------ | --------------------------- |
-| `<leader>pf` | Find files by name          |
-| `<C-p>`      | Find git files              |
+| Shortcut | Action |
+|---|---|
+| `<leader>pf` | Find files by name |
+| `<C-p>` | Find git files |
 | `<leader>ps` | Live grep (search in files) |
-| `<leader>vh` | Help tags                   |
+| `<leader>vh` | Help tags |
 
 ### Harpoon (Quick Navigation)
 
-| Shortcut    | Action                      |
-| ----------- | --------------------------- |
+| Shortcut | Action |
+|---|---|
 | `<leader>a` | Add current file to harpoon |
-| `<C-e>`     | Toggle harpoon menu         |
-| `<C-h>`     | Navigate to harpoon file 1  |
-| `<C-t>`     | Navigate to harpoon file 2  |
-| `<C-n>`     | Navigate to harpoon file 3  |
-| `<C-s>`     | Navigate to harpoon file 4  |
-| `<A-p>`     | Navigate to previous mark   |
-| `<A-n>`     | Navigate to next mark       |
+| `<C-e>` | Toggle harpoon menu |
+| `<C-h>` | Navigate to harpoon file 1 |
+| `<C-t>` | Navigate to harpoon file 2 |
+| `<C-n>` | Navigate to harpoon file 3 |
+| `<C-s>` | Navigate to harpoon file 4 |
+| `<A-p>` | Navigate to previous mark |
+| `<A-n>` | Navigate to next mark |
 
 ### Text Editing & Movement
 
-| Shortcut     | Action                           |
-| ------------ | -------------------------------- |
-| `J` (visual) | Move selected lines down         |
-| `K` (visual) | Move selected lines up           |
-| `<C-d>`      | Page down (centered)             |
-| `<C-u>`      | Page up (centered)               |
-| `n`          | Next search match (centered)     |
-| `N`          | Previous search match (centered) |
-| `ciw`        | Change inner word                |
-| `=ap`        | Indent entire paragraph          |
-| `=` (visual) | Indent selected lines            |
+| Shortcut | Action |
+|---|---|
+| `J` (visual) | Move selected lines down |
+| `K` (visual) | Move selected lines up |
+| `<C-d>` | Page down (centered) |
+| `<C-u>` | Page up (centered) |
+| `n` | Next search match (centered) |
+| `N` | Previous search match (centered) |
+| `ciw` | Change inner word |
+| `=ap` | Indent entire paragraph |
+| `=` (visual) | Indent selected lines |
 
 ### Clipboard Operations
 
-| Shortcut             | Action                             | Original Command |
-| -------------------- | ---------------------------------- | ---------------- |
-| `<leader>y`          | Copy to system clipboard           | `"+y`            |
-| `<leader>Y`          | Copy line to system clipboard      | `"+Y`            |
-| `"+p`                | Paste from system clipboard        | `"+p`            |
-| `gg<leader>yG`       | Copy entire file to clipboard      | `gg"+yG`         |
-| `<leader>p` (visual) | Paste without overwriting register | `"_dP`           |
+| Shortcut | Action | Original Command |
+|---|---|---|
+| `<leader>y` | Copy to system clipboard | `"+y` |
+| `<leader>Y` | Copy line to system clipboard | `"+Y` |
+| `"+p` | Paste from system clipboard | `"+p` |
+| `gg<leader>yG` | Copy entire file to clipboard | `gg"+yG` |
+| `<leader>p` (visual) | Paste without overwriting register | `"_dP` |
 
 ### Search & Replace
 
-| Shortcut         | Action                           |
-| ---------------- | -------------------------------- |
-| `/pattern`       | Search for pattern               |
-| `<leader>s`      | Substitute word under cursor     |
-| `:%s/old/new/g`  | Replace all occurrences globally |
-| `:%s/old/new/gc` | Replace with confirmation        |
-| `:s/old/new/g`   | Replace in current line          |
+| Shortcut | Action |
+|---|---|
+| `/pattern` | Search for pattern |
+| `<leader>s` | Substitute word under cursor |
+| `:%s/old/new/g` | Replace all occurrences globally |
+| `:%s/old/new/gc` | Replace with confirmation |
+| `:s/old/new/g` | Replace in current line |
 
 ### LSP (Language Server)
 
-| Shortcut     | Action                                          |
-| ------------ | ----------------------------------------------- |
-| `gd`         | Go to definition                                |
-| `gr`         | Show references                                 |
-| `gi`         | Go to implementation                            |
-| `go`         | Go to type definition                           |
-| `K`          | Show hover documentation                        |
-| `gs`         | Signature help                                  |
-| `<leader>rn` | Rename symbol                                   |
-| `<leader>fm` | Format code                                     |
-| `<leader>ca` | Code actions                                    |
-| `<C-o>`      | Jump back                                       |
-| `<C-i>`      | Jump back forward (reverse of the above command |
+| Shortcut | Action |
+|---|---|
+| `gd` | Go to definition |
+| `gr` | Show references |
+| `gi` | Go to implementation |
+| `go` | Go to type definition |
+| `K` | Show hover documentation |
+| `gs` | Signature help |
+| `<leader>rn` | Rename symbol |
+| `<leader>fm` | Format code |
+| `<leader>ca` | Code actions |
+| `<C-o>` | Jump back |
+| `<C-i>` | Jump back forward (reverse of the above command |
 
-\*note, don't change the above command action details, i have written it differently for my own convinience
+> \*note, don't change the above command action details, i have written it differently for my own convinience
 
 ### Diagnostics
 
-| Shortcut     | Action                |
-| ------------ | --------------------- |
-| `gl`         | Show line diagnostics |
-| `[d`         | Previous diagnostic   |
-| `]d`         | Next diagnostic       |
+| Shortcut | Action |
+|---|---|
+| `gl` | Show line diagnostics |
+| `[d` | Previous diagnostic |
+| `]d` | Next diagnostic |
 | `<leader>ld` | Open diagnostics list |
 
 ### Completion (nvim-cmp)
 
-| Shortcut    | Action                   |
-| ----------- | ------------------------ |
-| `<C-Space>` | Trigger completion       |
-| `<Tab>`     | Next completion item     |
-| `<S-Tab>`   | Previous completion item |
-| `<CR>`      | Confirm selection        |
-| `<C-e>`     | Abort completion         |
+| Shortcut | Action |
+|---|---|
+| `<C-Space>` | Trigger completion |
+| `<Tab>` | Next completion item |
+| `<S-Tab>` | Previous completion item |
+| `<CR>` | Confirm selection |
+| `<C-e>` | Abort completion |
 
 ### Git Operations
 
-| Shortcut     | Action                |
-| ------------ | --------------------- |
+| Shortcut | Action |
+|---|---|
 | `<leader>gg` | Open LazyGit (`q` to exit) |
 | `<leader>gs` | Git status (fugitive) |
-| `]c`         | Next git hunk         |
-| `[c`         | Previous git hunk     |
-| `<leader>hs` | Stage hunk            |
-| `<leader>hr` | Reset hunk            |
-| `<leader>hp` | Preview hunk          |
+| `]c` | Next git hunk |
+| `[c` | Previous git hunk |
+| `<leader>hs` | Stage hunk |
+| `<leader>hr` | Reset hunk |
+| `<leader>hp` | Preview hunk |
 
 ### Utility Tools
 
-| Shortcut     | Action                          |
-| ------------ | ------------------------------- |
-| `<leader>u`  | Toggle undo tree                |
+| Shortcut | Action |
+|---|---|
+| `<leader>u` | Toggle undo tree |
 | `<leader>mp` | Format file (oxfmt/ruff/stylua) |
-| `<leader>x`  | Make file executable            |
-| `:Lazy sync` | Update plugins                  |
+| `<leader>x` | Make file executable |
+| `:Lazy sync` | Update plugins |
 
 ### Vim-Sneak (Enhanced Movement)
 
-| Shortcut        | Action                         |
-| --------------- | ------------------------------ |
+| Shortcut | Action |
+|---|---|
 | `s<char><char>` | Jump to two-character sequence |
-| `;`             | Repeat last sneak forward      |
-| `S`             | Sneak backwards                |
-| `<C-o>`         | Jump back to starting position |
+| `;` | Repeat last sneak forward |
+| `S` | Sneak backwards |
+| `<C-o>` | Jump back to starting position |
 
 ### Special Functions
 
-| Shortcut               | Action                         |
-| ---------------------- | ------------------------------ |
+| Shortcut | Action |
+|---|---|
 | `lua ColorMyPencils()` | Restore transparent background |
-| `:TSPlaygroundToggle`  | Toggle treesitter playground   |
+| `:TSPlaygroundToggle` | Toggle treesitter playground |
 
 <!-- ### Avante AI Assistant (DISABLED)
 
@@ -213,43 +215,43 @@ _Space is the leader key_
 
 ### Text Objects & Motions
 
-| Shortcut    | Action                    |
-| ----------- | ------------------------- |
-| `vi"`       | Select inside quotes      |
-| `vi(`       | Select inside parentheses |
-| `cit`       | Change inside HTML tags   |
-| `dit`       | Delete inside HTML tags   |
-| `.`         | Repeat last command       |
-| `:set wrap` | Enable line wrapping      |
+| Shortcut | Action |
+|---|---|
+| `vi"` | Select inside quotes |
+| `vi(` | Select inside parentheses |
+| `cit` | Change inside HTML tags |
+| `dit` | Delete inside HTML tags |
+| `.` | Repeat last command |
+| `:set wrap` | Enable line wrapping |
 
 ### Window Management
 
-| Shortcut       | Action                 |
-| -------------- | ---------------------- |
-| `<C-w>w`       | Switch between windows |
-| `<C-w>h/j/k/l` | Navigate windows       |
-| `<C-w>s`       | Split horizontally     |
-| `<C-w>v`       | Split vertically       |
+| Shortcut | Action |
+|---|---|
+| `<C-w>w` | Switch between windows |
+| `<C-w>h/j/k/l` | Navigate windows |
+| `<C-w>s` | Split horizontally |
+| `<C-w>v` | Split vertically |
 
 ## Go Development Shortcuts
 
-| Shortcut     | Action                           |
-| ------------ | -------------------------------- |
-| `<leader>ee` | Insert error return pattern      |
-| `<leader>ea` | Insert assert.NoError            |
+| Shortcut | Action |
+|---|---|
+| `<leader>ee` | Insert error return pattern |
+| `<leader>ea` | Insert assert.NoError |
 | `<leader>ef` | Insert log.Fatalf error handling |
-| `<leader>el` | Insert logger.Error pattern      |
+| `<leader>el` | Insert logger.Error pattern |
 
 ## Debugging (DAP)
 
-| Shortcut     | Action                     |
-| ------------ | -------------------------- |
-| `<leader>dc` | Start/Continue debugging   |
-| `<leader>di` | Step into                  |
-| `<leader>do` | Step over                  |
-| `<leader>du` | Step out                   |
-| `<leader>dt` | Toggle debug UI            |
-| `<leader>db` | Toggle breakpoint          |
+| Shortcut | Action |
+|---|---|
+| `<leader>dc` | Start/Continue debugging |
+| `<leader>di` | Step into |
+| `<leader>do` | Step over |
+| `<leader>du` | Step out |
+| `<leader>dt` | Toggle debug UI |
+| `<leader>db` | Toggle breakpoint |
 | `<leader>dB` | Set conditional breakpoint |
 
 ## Installation
@@ -311,5 +313,5 @@ nvim
 
 ---
 
-_Configuration last updated: March 2026_
+_Configuration last updated: March 2026_  
 _Feel free to use and modify - attribution appreciated!_
