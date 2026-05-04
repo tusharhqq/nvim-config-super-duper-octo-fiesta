@@ -116,9 +116,9 @@ case $OSTYPE in
   ;;
 esac
 
-if type lsd &> /dev/null; then
-  alias ls=lsd
-fi
+#if type lsd &> /dev/null; then
+#  alias ls=lsd
+#fi
 alias lls='ls -lh --sort=size --reverse'
 alias llt='ls -lrt'
 alias bear='clear && echo "Clear as a bear!"'
@@ -320,16 +320,7 @@ fi
 
 
 
-export PATH=$PATH:/Users/blouse_man/go/bin
-
-alias vi="nvim"
-
-# bun completions
-[ -s "/Users/blouse_man/.bun/_bun" ] && source "/Users/blouse_man/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH=$PATH:$HOME/go/bin
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -360,7 +351,7 @@ export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$
 
 
 # pnpm
-export PNPM_HOME="/Users/blouse_man/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -387,7 +378,7 @@ export PATH=$PATH:/opt/homebrew/bin
 #
 #
 # this one works pretty good 
-#[[ ! -r '/Users/blouse_man/.opam/opam-init/init.zsh' ]] || source '/Users/blouse_man/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+#[[ ! -r '$HOME/.opam/opam-init/init.zsh' ]] || source '$HOME/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 #
 #
 #
@@ -398,33 +389,36 @@ export PATH=$PATH:/opt/homebrew/bin
 # alternative opam configuration
 # FAST: Lazy-load opam to speed up shell startup.
 # This function will only run once, the first time you use the `opam` command.
-if command -v opam >/dev/null; then
-  opam() {
-    # Remove this temporary wrapper function.
-    unfunction "$0"
-
-    # Now, run the actual opam initialization script.
-    # We use ${HOME} to be more portable than a hard-coded path.
-    source "${HOME}/.opam/opam-init/init.zsh" >/dev/null 2>&1
-
-    # Finally, execute the real `opam` command with all the arguments
-    # you originally passed to it.
-    command opam "$@"
-  }
-fi
+#
+#
+#
+#if command -v opam >/dev/null; then
+#  opam() {
+#    # Remove this temporary wrapper function.
+#    unfunction "$0"
+#
+#    # Now, run the actual opam initialization script.
+#    # We use ${HOME} to be more portable than a hard-coded path.
+#    source "${HOME}/.opam/opam-init/init.zsh" >/dev/null 2>&1
+#
+#    # Finally, execute the real `opam` command with all the arguments
+#    # you originally passed to it.
+#    command opam "$@"
+#  }
+#fi
 
 #source <(fzf --zsh)
-export GPG_TTY=$(tty) # or /Users/blouse_man/.bashrc if you use bash
+export GPG_TTY=$(tty) # or $HOME/.bashrc if you use bash
 
 # Added by Windsurf
-export PATH="/Users/blouse_man/.codeium/windsurf/bin:$PATH"
+export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 export PATH="/opt/homebrew/opt/lua@5.1/bin:$PATH"
 export PATH="/opt/homebrew/Cellar/sevenzip/24.09/bin:$PATH"
 
 # Cursor
-alias c="open $1 -a \"Cursor\""
+alias cr="open $1 -a \"Cursor\""
 # Visual Studio Code
-alias v="open $1 -a \"Visual Studio Code\""
+alias vs="open $1 -a \"Visual Studio Code\""
 
 if command -v rbenv >/dev/null; then
     eval "$(rbenv init - --no-rehash zsh)"
@@ -433,13 +427,31 @@ fi
 
 
 # opencode
-export PATH=/Users/blouse_man/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
 #zprof
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/blouse_man/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
+fpath=($HOME/.docker/completions $fpath)
 # End of Docker CLI completions
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
+
+source <(COMPLETE=zsh jj)
+alias g++="/opt/homebrew/bin/g++-15"
+# export PATH="/opt/homebrew/opt/binutils/bin:$PATH"  # Commented out - conflicts with macOS ar
+alias clang+++="clang++ -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1"
+
+# Added by Antigravity
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+
+
+# BEGIN opam configuration
+# This is useful if you're using opam as it adds:
+#   - the correct directories to the PATH
+#   - auto-completion for the opam binary
+# This section can be safely removed at any time if needed.
+[[ ! -r '$HOME/.opam/opam-init/init.zsh' ]] || source '$HOME/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+# END opam configuration
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+
+[ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
