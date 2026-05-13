@@ -4,7 +4,8 @@
 ##########
 
 
-typeset -U PATH
+typeset -U path PATH fpath FPATH
+autoload colors; colors;
 
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=50000
@@ -159,7 +160,7 @@ po() {
   gh pr list --author "@me" | fzf --header 'checkout PR' | awk '{print $(NF-5)}' | xargs git checkout
 }
 alias up='git push'
-alias upf='git push --force'
+alias upl='git push --force-with-lease'
 alias pu='git pull'
 alias pur='git pull --rebase'
 alias fe='git fetch'
@@ -235,12 +236,47 @@ alias zedn='/Applications/Zed\ Nightly.app/Contents/MacOS/cli'
 alias r='cargo run'
 alias rr='cargo run --release'
 
+alias p='pnpm'
+alias pd='pnpm dev'
+alias pc='pnpm check'
+alias pf='pnpm check:fix'
+alias pt='pnpm test --run'
+
 ##########
 # FUNCTIONS
 ##########
 
 mkdircd() {
-    mkdir -p $1 && cd $1
+    mkdir -p "$1" && cd "$1"
+}
+
+render_dot() {
+  local out="${1}.png"
+  dot "${1}" \
+    -Tpng \
+    -Nfontname='JetBrains Mono' \
+    -Nfontsize=10 \
+    -Nfontcolor='#fbf1c7' \
+    -Ncolor='#fbf1c7' \
+    -Efontname='JetBrains Mono' \
+    -Efontcolor='#fbf1c7' \
+    -Efontsize=10 \
+    -Ecolor='#fbf1c7' \
+    -Gbgcolor='#1d2021' > "${out}" || return
+
+  if command -v kitten >/dev/null; then
+    kitten icat --align=left "${out}"
+  else
+    open "${out}"
+  fi
+}
+
+beautiful() {
+  local i=0
+  while
+  do
+    i=$((i + 1)) && echo -en "\x1b[3$(($i % 7))mo" && sleep .2
+  done
 }
 
 spinner() {
@@ -283,6 +319,68 @@ git_prompt_info() {
   echo " %{$fg_bold[green]%}${ref#refs/heads/}$dirstatus%{$reset_color%}"
 }
 
+jj_prompt_info() {
+  local dirty="%{$fg_bold[red]%} X%{$reset_color%}"
+  local clean=""
+  local conflicts="%{$fg_bold[yellow]%} !%{$reset_color%}"
+
+  local bookmark=$(jj log -r @ --no-graph -T 'bookmarks' 2> /dev/null | tr -d '*' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+  local change_id=$(jj log -r @ --no-graph -T 'change_id.shortest()' 2> /dev/null) || return
+
+  local wc_status=""
+  if jj status | grep -q "Working copy changes:"; then
+    wc_status=$dirty
+  elif jj log -r @ --no-graph -T 'conflict' 2> /dev/null | grep -q "true"; then
+    wc_status=$conflicts
+  else
+    wc_status=$clean
+  fi
+
+  local ref_display="${bookmark:-$change_id}"
+  echo " %{$fg_bold[green]%}${ref_display}${wc_status}%{$reset_color%}"
+}
+
+vcs_prompt_info() {
+  local dirty="%{$fg_bold[red]%} X%{$reset_color%}"
+  local clean=""
+
+  if [[ "$VCS_PROMPT_MODE" == "git" ]]; then
+    local dirstatus="$clean"
+    if [[ ! -z $(git status --porcelain 2> /dev/null | tail -n1) ]]; then
+      dirstatus=$dirty
+    fi
+
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || \
+    ref=$(git rev-parse --short HEAD 2> /dev/null) || return
+    echo " %{$fg_bold[green]%}${ref#refs/heads/}$dirstatus%{$reset_color%}"
+    return
+  fi
+
+  if command -v jj &>/dev/null && jj status &>/dev/null; then
+    jj_prompt_info
+    return
+  fi
+
+  local dirstatus="$clean"
+  if [[ ! -z $(git status --porcelain 2> /dev/null | tail -n1) ]]; then
+    dirstatus=$dirty
+  fi
+
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || \
+  ref=$(git rev-parse --short HEAD 2> /dev/null) || return
+  echo " %{$fg_bold[green]%}${ref#refs/heads/}$dirstatus%{$reset_color%}"
+}
+
+prompt_git_mode() {
+  export VCS_PROMPT_MODE="git"
+  echo "Switched to git prompt mode"
+}
+
+prompt_jj_mode() {
+  unset VCS_PROMPT_MODE
+  echo "Switched to jj prompt mode (default)"
+}
+
 # local dir_info_color="$fg_bold[black]"
 
 # This just sets the color to "bold".
@@ -308,7 +406,7 @@ simple_prompt() {
   export PROMPT="%{$prompt_color%}$promptnormal"
 }
 
-PROMPT='$(git_prompt_info)${dir_info} $promptnormal'
+PROMPT='${dir_info}$(vcs_prompt_info) $promptnormal'
 
 ########
 # ENV
@@ -396,11 +494,6 @@ esac
 # pnpm end
 #
 #
-export PATH=$PATH:/opt/homebrew/bin
-
-
-
-
 
 
 
@@ -435,8 +528,6 @@ fi
 #source <(fzf --zsh)
 export GPG_TTY=$(tty) # or /Users/blouse_man/.bashrc if you use bash
 
-# Added by Windsurf
-export PATH="/Users/blouse_man/.codeium/windsurf/bin:$PATH"
 [[ -d "/opt/homebrew/opt/sevenzip/bin" ]] && export PATH="/opt/homebrew/opt/sevenzip/bin:$PATH"
 
 # Cursor
@@ -454,9 +545,10 @@ fpath=(/Users/blouse_man/.docker/completions $fpath)
 # End of Docker CLI completions
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /opt/homebrew/bin/terraform terraform
+[[ -x /opt/homebrew/bin/terraform ]] && complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
-source <(COMPLETE=zsh jj)
+command -v jj >/dev/null && source <(COMPLETE=zsh jj)
+command -v opencode >/dev/null && source <(opencode completion)
 alias g++="/opt/homebrew/bin/g++-15"
 # export PATH="/opt/homebrew/opt/binutils/bin:$PATH"  # Commented out - conflicts with macOS ar
 alias clang+++="clang++ -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1"
@@ -471,4 +563,7 @@ export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 for haskell_path in "$HOME/.ghcup/bin" "$HOME/.cabal/bin"; do
   [[ -d "$haskell_path" ]] && PATH="$haskell_path:$PATH"
 done
+
+path=(${(@)path:#/Users/blouse_man/.local/bin/zig})
+path=(${(@)path:#/Users/blouse_man/.local/share/nvim/lazy/fzf/bin})
 export PATH
