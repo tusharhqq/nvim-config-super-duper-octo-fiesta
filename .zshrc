@@ -28,7 +28,7 @@ unsetopt HIST_VERIFY          # Execute commands using history (e.g.: using !$) 
 # Add completions installed through Homebrew packages
 # See: https://docs.brew.sh/Shell-Completion
 if type brew &>/dev/null; then
-  FPATH=/usr/local/share/zsh/site-functions:$FPATH
+  FPATH="$(brew --prefix)/share/zsh/site-functions:$FPATH"
 fi
 
 # Speed up completion init, see: https://gist.github.com/ctechols/ca1035271ad134841284
@@ -119,12 +119,12 @@ esac
 #if type lsd &> /dev/null; then
 #  alias ls=lsd
 #fi
-alias lls='ls -lh --sort=size --reverse'
+alias lls='ls -lhSr'
 alias llt='ls -lrt'
 alias bear='clear && echo "Clear as a bear!"'
 
 alias history='history 1'
-alias hs='history | grep '
+alias hg='history | grep --color=auto'
 
 # Use rsync with ssh and show progress
 alias rsyncssh='rsync -Pr --rsh=ssh'
@@ -140,6 +140,7 @@ alias ea='nvim $(fzf --preview="cat {}")'
 #nvim $(fzf --preview='cat {}')
 
 # git
+alias monsterclean='git clean -fdx -e .jj/'
 alias gst='git status'
 alias gaa='git add -A'
 alias ga='git add'
@@ -167,6 +168,52 @@ alias lr='git l -30'
 alias cdr='cd $(git rev-parse --show-toplevel)' # cd to git Root
 alias hs='git rev-parse --short HEAD'
 alias hm='git log --format=%B -n 1 HEAD'
+
+# jj
+alias jjpb="jj log -r 'latest(heads(ancestors(@) & bookmarks()), 1)' --limit 1 --no-graph --ignore-working-copy -T bookmarks | tr -d '*'"
+
+jj-update-branch() {
+  local rev="${1:-@}"
+  if [ $# -gt 0 ]; then
+    shift
+  fi
+  jj bookmark move "$(jjpb)" --to "$rev" "$@"
+}
+
+alias jjub=jj-update-branch
+alias jn='jj new'
+alias jc='jj commit'
+alias jst='jj status'
+alias jf='jj git fetch'
+alias jp='jj git push'
+alias jd='jj diff'
+alias jrt='jj retrunk'
+jjlt() {
+  local n="${1:-10}"
+  jj log -r "latest(ancestors(trunk()), $n)" --color=always -T '
+    change_id.shortest(8) ++ " " ++
+    commit_id.shortest(8) ++ " " ++
+    "§" ++ author.email() ++ "§{" ++
+    committer.timestamp().ago() ++ "{" ++
+    if(bookmarks, bookmarks ++ " ", "") ++
+    description.first_line()
+  ' | column -t -s '{' | perl -pe '
+    BEGIN {
+      @colors = (1,2,3,5,6,9,10,11,12,13,14,33,39,41,47,50,51,82,118,154,166,172,196,199,208,214,220,226);
+      sub colorize {
+        my $e = shift;
+        $e =~ s/\e\[[0-9;]*m//g;
+        my $h = 0;
+        $h += ord($_) for split("", $e);
+        my $c = $colors[$h % scalar(@colors)];
+        return "\e[38;5;${c}m$e\e[0m";
+      }
+    }
+    s/§([^§]+)§/colorize($1)/ge
+  ' | less -XFRS
+}
+alias jl='jj log'
+alias jlr='jj lr'
 
 # tmux
 alias tma='tmux attach -t'
@@ -283,16 +330,14 @@ export LSCOLORS="Gxfxcxdxbxegedabagacad"
 # Set it to 10ms
 export KEYTIMEOUT=1
 
-export PATH="$HOME/neovim/bin:$PATH"
-
 if type nvim &> /dev/null; then
   alias vi="nvim"
   export EDITOR="nvim"
-  export PSQL_EDITOR="nvim -c"set filetype=sql""
+  export PSQL_EDITOR='nvim -c "set filetype=sql"'
   export GIT_EDITOR="nvim"
 else
   export EDITOR='vi'
-  export PSQL_EDITOR='vi -c"set filetype=sql"'
+  export PSQL_EDITOR='vi -c "set filetype=sql"'
   export GIT_EDITOR='vi'
 fi
 
@@ -320,7 +365,7 @@ fi
 
 
 
-export PATH=$PATH:$HOME/go/bin
+export PATH=$PATH:/Users/blouse_man/go/bin
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -342,16 +387,8 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 ##export JAVA_HOME=$(/usr/libexec/java_home -v 22)
 #export PATH=$JAVA_HOME/bin:$PATH
 #
-#commented the working code and replaced it with this other version
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
-export PATH="$JAVA_HOME/bin:$PATH"
-
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
-
-
 # pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
+export PNPM_HOME="/Users/blouse_man/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -378,7 +415,7 @@ export PATH=$PATH:/opt/homebrew/bin
 #
 #
 # this one works pretty good 
-#[[ ! -r '$HOME/.opam/opam-init/init.zsh' ]] || source '$HOME/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+#[[ ! -r '/Users/blouse_man/.opam/opam-init/init.zsh' ]] || source '/Users/blouse_man/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 #
 #
 #
@@ -386,34 +423,21 @@ export PATH=$PATH:/opt/homebrew/bin
 # END opam configuration
 #
 #
-# alternative opam configuration
-# FAST: Lazy-load opam to speed up shell startup.
-# This function will only run once, the first time you use the `opam` command.
-#
-#
-#
-#if command -v opam >/dev/null; then
-#  opam() {
-#    # Remove this temporary wrapper function.
-#    unfunction "$0"
-#
-#    # Now, run the actual opam initialization script.
-#    # We use ${HOME} to be more portable than a hard-coded path.
-#    source "${HOME}/.opam/opam-init/init.zsh" >/dev/null 2>&1
-#
-#    # Finally, execute the real `opam` command with all the arguments
-#    # you originally passed to it.
-#    command opam "$@"
-#  }
-#fi
+# Lazy-load opam so shell startup does not source its completion/env hooks.
+if command -v opam >/dev/null; then
+  opam() {
+    unfunction "$0"
+    [[ ! -r "${HOME}/.opam/opam-init/init.zsh" ]] || source "${HOME}/.opam/opam-init/init.zsh" >/dev/null 2>&1
+    command opam "$@"
+  }
+fi
 
 #source <(fzf --zsh)
-export GPG_TTY=$(tty) # or $HOME/.bashrc if you use bash
+export GPG_TTY=$(tty) # or /Users/blouse_man/.bashrc if you use bash
 
 # Added by Windsurf
-export PATH="$HOME/.codeium/windsurf/bin:$PATH"
-export PATH="/opt/homebrew/opt/lua@5.1/bin:$PATH"
-export PATH="/opt/homebrew/Cellar/sevenzip/24.09/bin:$PATH"
+export PATH="/Users/blouse_man/.codeium/windsurf/bin:$PATH"
+[[ -d "/opt/homebrew/opt/sevenzip/bin" ]] && export PATH="/opt/homebrew/opt/sevenzip/bin:$PATH"
 
 # Cursor
 alias cr="open $1 -a \"Cursor\""
@@ -424,13 +448,9 @@ if command -v rbenv >/dev/null; then
     eval "$(rbenv init - --no-rehash zsh)"
 fi
 
-
-
-# opencode
-export PATH=$HOME/.opencode/bin:$PATH
 #zprof
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=($HOME/.docker/completions $fpath)
+fpath=(/Users/blouse_man/.docker/completions $fpath)
 # End of Docker CLI completions
 
 autoload -U +X bashcompinit && bashcompinit
@@ -442,16 +462,13 @@ alias g++="/opt/homebrew/bin/g++-15"
 alias clang+++="clang++ -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1"
 
 # Added by Antigravity
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+export PATH="/Users/blouse_man/.antigravity/antigravity/bin:$PATH"
 
 
-# BEGIN opam configuration
-# This is useful if you're using opam as it adds:
-#   - the correct directories to the PATH
-#   - auto-completion for the opam binary
-# This section can be safely removed at any time if needed.
-[[ ! -r '$HOME/.opam/opam-init/init.zsh' ]] || source '$HOME/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
-# END opam configuration
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
-[ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+for haskell_path in "$HOME/.ghcup/bin" "$HOME/.cabal/bin"; do
+  [[ -d "$haskell_path" ]] && PATH="$haskell_path:$PATH"
+done
+export PATH
