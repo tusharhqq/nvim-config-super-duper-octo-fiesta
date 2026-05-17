@@ -313,5 +313,5 @@ nvim
 
 ---
 
-_Configuration last updated: March 2026_  
+_Configuration last updated: march 2026_  
 _Feel free to use and modify - attribution appreciated!_
