@@ -117,10 +117,10 @@ case $OSTYPE in
   ;;
 esac
 
-#if type lsd &> /dev/null; then
-#  alias ls=lsd
-#fi
-alias lls='ls -lhSr'
+if type lsd &> /dev/null; then
+  alias ls=lsd
+fi
+alias lls='ls -lh --sort=size --reverse'
 alias llt='ls -lrt'
 alias bear='clear && echo "Clear as a bear!"'
 
@@ -530,10 +530,13 @@ export GPG_TTY=$(tty) # or /Users/blouse_man/.bashrc if you use bash
 
 [[ -d "/opt/homebrew/opt/sevenzip/bin" ]] && export PATH="/opt/homebrew/opt/sevenzip/bin:$PATH"
 
-# Cursor
-alias cr="open $1 -a \"Cursor\""
-# Visual Studio Code
-alias vs="open $1 -a \"Visual Studio Code\""
+cr() {
+  open "${1:-.}" -a "Cursor"
+}
+
+vs() {
+  open "${1:-.}" -a "Visual Studio Code"
+}
 
 if command -v rbenv >/dev/null; then
     eval "$(rbenv init - --no-rehash zsh)"
@@ -548,7 +551,14 @@ autoload -U +X bashcompinit && bashcompinit
 [[ -x /opt/homebrew/bin/terraform ]] && complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
 command -v jj >/dev/null && source <(COMPLETE=zsh jj)
-command -v opencode >/dev/null && source <(opencode completion)
+if command -v opencode >/dev/null; then
+  local opencode_completion_cache="${HOME}/.zcompcache/opencode.zsh"
+  if [[ ! -s "$opencode_completion_cache" || "$opencode_completion_cache" -ot "$(command -v opencode)" ]]; then
+    mkdir -p "${opencode_completion_cache:h}"
+    opencode completion >| "$opencode_completion_cache"
+  fi
+  source "$opencode_completion_cache"
+fi
 alias g++="/opt/homebrew/bin/g++-15"
 # export PATH="/opt/homebrew/opt/binutils/bin:$PATH"  # Commented out - conflicts with macOS ar
 alias clang+++="clang++ -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1"
