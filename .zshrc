@@ -146,7 +146,7 @@ alias gst='git status'
 alias gaa='git add -A'
 alias ga='git add'
 alias gc='git commit'
-alias gcm='git checkout trunk || git checkout main || git checkout master' 
+alias gcm='git checkout main' 
 alias gd='git diff'
 alias gdc='git diff --cached'
 # [c]heck [o]ut
@@ -530,7 +530,7 @@ export GPG_TTY=$(tty) # or /Users/blouse_man/.bashrc if you use bash
 
 [[ -d "/opt/homebrew/opt/sevenzip/bin" ]] && export PATH="/opt/homebrew/opt/sevenzip/bin:$PATH"
 
-cr() {
+cj() {
   open "${1:-.}" -a "Cursor"
 }
 
@@ -559,9 +559,8 @@ if command -v opencode >/dev/null; then
   fi
   source "$opencode_completion_cache"
 fi
+alias gcc="/opt/homebrew/bin/gcc-15"
 alias g++="/opt/homebrew/bin/g++-15"
-# export PATH="/opt/homebrew/opt/binutils/bin:$PATH"  # Commented out - conflicts with macOS ar
-alias clang+++="clang++ -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1"
 
 # Added by Antigravity
 export PATH="/Users/blouse_man/.antigravity/antigravity/bin:$PATH"
