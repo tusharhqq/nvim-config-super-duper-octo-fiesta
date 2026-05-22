@@ -292,11 +292,21 @@ spinner() {
 
 # Open PR on GitHub
 pr() {
-  if type gh &> /dev/null; then
-    gh pr view -w
-  else
+  if ! type gh &> /dev/null; then
     echo "gh is not installed"
+    return 1
   fi
+
+  if type jj &> /dev/null && jj status &> /dev/null; then
+    local bookmark
+    bookmark="$(jjpb)"
+    if [[ -n "$bookmark" ]]; then
+      gh pr view "$bookmark" -w "$@"
+      return
+    fi
+  fi
+
+  gh pr view -w "$@"
 }
 
 
