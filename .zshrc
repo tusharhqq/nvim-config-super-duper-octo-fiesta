@@ -572,6 +572,15 @@ fi
 alias gcc="/opt/homebrew/bin/gcc-15"
 alias g++="/opt/homebrew/bin/g++-15"
 
+if command -v sfw >/dev/null; then
+  alias npm="sfw npm"
+  alias npx="sfw npx"
+  alias pnpm="sfw pnpm"
+  alias pnpx="sfw pnpx"
+  alias yarn="sfw yarn"
+  alias bun="sfw bun"
+fi
+
 # Added by Antigravity
 export PATH="/Users/blouse_man/.antigravity/antigravity/bin:$PATH"
 
