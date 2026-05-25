@@ -191,6 +191,7 @@ alias jst='jj status'
 alias jf='jj git fetch'
 alias jp='jj git push'
 alias jd='jj diff'
+alias jb='jj bookmark'
 jjlt() {
   local n="${1:-10}"
   jj log -r "latest(ancestors(trunk()), $n)" --color=always -T '
