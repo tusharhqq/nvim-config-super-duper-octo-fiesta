@@ -1,5 +1,76 @@
 # nvim-config-super-duper-octo-fiesta
 
+Personal Neovim configuration for a fast, keyboard-focused editor setup with lazy-loaded plugins, Rose Pine styling, Telescope navigation, Harpoon marks, LSP support, formatting, diagnostics, and Git helpers.
+
+## What is this?
+
+This repository contains my Neovim config. The entry point is `init.lua`, which loads the `lua/dadima/` modules:
+
+- `lua/dadima/init.lua` wires the config together.
+- `lua/dadima/lazy.lua` bootstraps and configures lazy.nvim.
+- `lua/dadima/plugins.lua` declares plugins.
+- `lua/dadima/remap.lua` defines keymaps.
+- `lua/dadima/set.lua` defines editor options.
+- `after/` and `ftplugin/` contain filetype and plugin follow-up configuration.
+- `lazy-lock.json` pins plugin versions.
+
+## Who is it for?
+
+This is mainly for me and for anyone who wants to study or reuse a macOS-oriented Neovim setup with modern JavaScript, Python, LSP, formatting, fuzzy finding, and Git workflows.
+
+## Run it locally
+
+Back up your current Neovim config first if you already have one:
+
+```sh
+mv ~/.config/nvim ~/.config/nvim.backup
+```
+
+Clone this repository into Neovim's config directory:
+
+```sh
+git clone https://github.com/tusharxoxoxo/nvim-config-super-duper-octo-fiesta ~/.config/nvim
+```
+
+Open Neovim:
+
+```sh
+nvim
+```
+
+lazy.nvim will bootstrap itself on first launch. Install the prerequisites listed below before expecting every plugin and keymap to work.
+
+## Check and test
+
+There is no separate build step for this project. Use these commands as smoke checks:
+
+```sh
+nvim --headless +qa
+nvim --headless "+Lazy! sync" +qa
+nvim --headless "+checkhealth" +qa
+```
+
+The first command checks that Neovim can start with this config. The second syncs plugins. The third opens Neovim's health checks.
+
+## Contribute
+
+Keep changes small and focused. Before changing mappings, plugin behavior, or workflow notes, read the existing sections below and `jj.md` so the config stays consistent with the current habits documented here.
+
+Useful areas to check before contributing:
+
+- `lua/dadima/remap.lua` for keymaps
+- `lua/dadima/plugins.lua` for plugin setup
+- `lua/dadima/set.lua` for editor options
+- `jj.md` for the repo workflow notes
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
+
+---
+
+# nvim-config-super-duper-octo-fiesta
+
 My Neovim configuration files - clean, fast, and productive.
 
 ## Preview

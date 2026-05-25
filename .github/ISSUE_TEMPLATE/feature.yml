@@ -1,0 +1,44 @@
+name: Feature Request
+description: Suggest an improvement or new behavior
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What problem, limitation, or workflow gap led to this request?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: If this comes from an existing workflow, describe how to reach the problem today.
+      placeholder: |
+        1. Open ...
+        2. Try to ...
+        3. Notice ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What should the project support or do differently?
+    validations:
+      required: true
+
+  - type: textarea
+    id: version-environment
+    attributes:
+      label: Version/environment
+      description: Include relevant versions, OS, terminal, Neovim version, plugin version, or config details.
+      placeholder: |
+        OS:
+        Neovim:
+        Terminal:
+        Relevant plugin/config:
+    validations:
+      required: false
