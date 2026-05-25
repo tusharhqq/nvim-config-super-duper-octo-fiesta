@@ -183,12 +183,14 @@ jj-update-branch() {
 
 alias jjub=jj-update-branch
 alias jn='jj new'
+jrt() {
+  jj new 'trunk()'
+}
 alias jc='jj commit'
 alias jst='jj status'
 alias jf='jj git fetch'
 alias jp='jj git push'
 alias jd='jj diff'
-alias jrt='jj retrunk'
 jjlt() {
   local n="${1:-10}"
   jj log -r "latest(ancestors(trunk()), $n)" --color=always -T '

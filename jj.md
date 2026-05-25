@@ -5,6 +5,7 @@
 `@` is the working change. `@-` is its parent, often the commit you just made after `jc`.
 
 A JJ bookmark is like a Git branch. `trunk()` means the main or master branch.
+In zsh, quote it when typing commands: `'trunk()'`.
 
 There is no staging area. Edit files, then use `jc` to commit or `jj describe` to update the current change message.
 
@@ -20,7 +21,7 @@ There is no staging area. Edit files, then use `jc` to commit or `jj describe` t
 | `jjlt [n]` | trunk log, default 10 |
 | `jf` / `jp` | fetch / push |
 | `jn` / `jc` | new / commit |
-| `jrt` | retrunk |
+| `jrt` | new change from trunk: `jj new 'trunk()'` |
 | `jjpb` | nearest ancestor bookmark |
 | `jjub [rev]` | move that bookmark, default `@` |
 
@@ -69,7 +70,7 @@ There is no staging area. Edit files, then use `jc` to commit or `jj describe` t
 | `git push --all` | `jp --all` |
 | `git push --force-with-lease` | `jp --bookmark <name>` |
 | `git push --force` | fetch, fix bookmark conflict, then `jp`; avoid bare force |
-| `git pull` with rebase | `jf`, then `jj rebase -b <bookmark> -d trunk()` |
+| `git pull` with rebase | `jf`, then `jj rebase -b <bookmark> -d 'trunk()'` |
 | `git pull` with merge | `jf`, then `jj new @ <bookmark>@origin` |
 
 ### Branches become bookmarks
@@ -111,8 +112,8 @@ A JJ merge is a new change with two parents.
 
 | git | jj |
 |-----|-----|
-| `git rebase main` | `jj rebase -b @ -d trunk()` or `jj rebase -b my-branch -d trunk()` |
-| `git rebase main feature` | `jj rebase -b feature -d trunk()` |
+| `git rebase main` | `jj rebase -b @ -d 'trunk()'` or `jj rebase -b my-branch -d 'trunk()'` |
+| `git rebase main feature` | `jj rebase -b feature -d 'trunk()'` |
 | `git rebase --onto B A` | `jj rebase -s <revs> -o B` |
 | `git rebase -i` reorder | `jj rebase -r … --before/after …` or `jj arrange` |
 | update remote after rebase | `jjub`, then `jp --bookmark …` |
@@ -170,7 +171,7 @@ Use `jj undo` when the last JJ command did something unexpected.
 
 ```sh
 jj git clone <url> && cd <repo> && jf
-jn trunk()
+jrt
 # edit → jst / jd
 jc -m "msg"
 jj bookmark create my-branch -r @-
@@ -199,7 +200,7 @@ jp --bookmark my-branch
 
 ```sh
 jf
-jj rebase -b my-branch -d trunk()
+jj rebase -b my-branch -d 'trunk()'
 jp --bookmark my-branch
 ```
 
