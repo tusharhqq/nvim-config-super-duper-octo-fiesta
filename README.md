@@ -1,4 +1,4 @@
-# nvim-config-super-duper-octo-fiesta
+# config
 
 Personal Neovim configuration for a fast, keyboard-focused editor setup with lazy-loaded plugins, Rose Pine styling, Telescope navigation, Harpoon marks, LSP support, formatting, diagnostics, and Git helpers.
 
