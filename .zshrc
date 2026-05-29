@@ -547,6 +547,8 @@ cj() {
   open "${1:-.}" -a "Cursor"
 }
 
+alias ck='agent'
+
 vs() {
   open "${1:-.}" -a "Visual Studio Code"
 }
