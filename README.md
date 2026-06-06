@@ -1,4 +1,4 @@
-# config
+# nvim-config-super-duper-octo-fiesta
 
 Personal Neovim configuration for a fast, keyboard-focused editor setup with lazy-loaded plugins, Rose Pine styling, Telescope navigation, Harpoon marks, LSP support, formatting, diagnostics, and Git helpers.
 
@@ -8,10 +8,13 @@ This repository contains my Neovim config. The entry point is `init.lua`, which 
 
 - `lua/dadima/init.lua` wires the config together.
 - `lua/dadima/lazy.lua` bootstraps and configures lazy.nvim.
-- `lua/dadima/plugins.lua` declares plugins.
+- `lua/dadima/plugins.lua` declares shared plugin specs and tooling.
+- `lua/dadima/lsp.lua` configures language servers, completion, diagnostics, and formatting.
+- `lua/dadima/treesitter.lua` configures Treesitter.
+- `lua/dadima/git.lua` configures Git integrations.
+- `lua/dadima/undotree.lua` configures undo history.
 - `lua/dadima/remap.lua` defines keymaps.
 - `lua/dadima/set.lua` defines editor options.
-- `after/` and `ftplugin/` contain filetype and plugin follow-up configuration.
 - `lazy-lock.json` pins plugin versions.
 
 ## Who is it for?
@@ -59,7 +62,7 @@ Keep changes small and focused. Before changing mappings, plugin behavior, or wo
 Useful areas to check before contributing:
 
 - `lua/dadima/remap.lua` for keymaps
-- `lua/dadima/plugins.lua` for plugin setup
+- `lua/dadima/plugins.lua`, `lua/dadima/lsp.lua`, `lua/dadima/git.lua`, `lua/dadima/treesitter.lua`, and `lua/dadima/undotree.lua` for plugin setup
 - `lua/dadima/set.lua` for editor options
 - `jj.md` for the repo workflow notes
 
@@ -68,10 +71,6 @@ Useful areas to check before contributing:
 This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ---
-
-# nvim-config-super-duper-octo-fiesta
-
-My Neovim configuration files - clean, fast, and productive.
 
 ## Preview
 
@@ -273,39 +272,6 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 | `<leader>ea` | Insert assert.NoError |
 | `<leader>ef` | Insert log.Fatalf error handling |
 | `<leader>el` | Insert logger.Error pattern |
-
-## Installation
-
-1. Backup your existing config:
-
-```bash
-mv ~/.config/nvim ~/.config/nvim.backup
-```
-
-2. Clone this config:
-
-```bash
-git clone https://github.com/tusharxoxoxo/nvim-config-super-duper-octo-fiesta ~/.config/nvim
-```
-
-3. Install ripgrep:
-
-```bash
-# macOS
-brew install ripgrep
-
-# Ubuntu/Debian
-sudo apt install ripgrep
-
-# Arch
-sudo pacman -S ripgrep
-```
-
-4. Start Neovim and let Lazy.nvim install plugins:
-
-```bash
-nvim
-```
 
 ## Plugin Highlights
 

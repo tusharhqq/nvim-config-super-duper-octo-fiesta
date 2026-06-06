@@ -15,7 +15,9 @@ require("lazy").setup({
   { import = "dadima.plugins" },
   { import = "dadima.lsp" },
   { import = "dadima.treesitter" },
+  { import = "dadima.harpoon" },
   { import = "dadima.git" },
+  { import = "dadima.undotree" },
 }, {
   change_detection = {
     notify = false,

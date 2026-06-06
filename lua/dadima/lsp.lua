@@ -26,7 +26,6 @@ return {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-nvim-lua",
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -140,23 +139,6 @@ return {
 			-- Ruff setup (new ruff server replaces ruff_lsp)
 			vim.lsp.config("ruff", {
 				capabilities = capabilities,
-				init_options = {
-					settings = {
-						logLevel = "info", -- Change to 'debug' if needed
-						-- logFile = '/tmp/ruff.log', -- Uncomment to set a custom log file
-
-						-- Additional Ruff settings
-						args = {}, -- Add any additional ruff arguments here if needed
-
-						-- Enable/disable specific Ruff features
-						lint = {
-							enable = true, -- Enable linting (default: true)
-						},
-						format = {
-							enable = true, -- Enable formatting (default: true)
-						},
-					},
-				},
 			})
 			vim.lsp.enable("ruff", true)
 
