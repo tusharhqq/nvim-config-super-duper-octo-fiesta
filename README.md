@@ -95,7 +95,7 @@ Background image for transparent terminal:
 - **Rose-pine theme** with transparent background
 - **Telescope** for fuzzy finding
 - **Harpoon** for quick file navigation
-- **Modern LSP** setup with mason
+- **Modern LSP** setup with Mason-managed tools
 - **Smart formatting** with conform.nvim plus Oxc and Ruff
 - **Git integration** with fugitive and gitsigns
 - **Modern JS/Python tooling** with VoidZero and Astral
@@ -274,18 +274,6 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 | `<leader>ef` | Insert log.Fatalf error handling |
 | `<leader>el` | Insert logger.Error pattern |
 
-## Debugging (DAP)
-
-| Shortcut | Action |
-|---|---|
-| `<leader>dc` | Start/Continue debugging |
-| `<leader>di` | Step into |
-| `<leader>do` | Step over |
-| `<leader>du` | Step out |
-| `<leader>dt` | Toggle debug UI |
-| `<leader>db` | Toggle breakpoint |
-| `<leader>dB` | Set conditional breakpoint |
-
 ## Installation
 
 1. Backup your existing config:
@@ -336,7 +324,7 @@ nvim
 ## Notes
 
 - The configuration uses a transparent background for terminal aesthetics
-- LSP servers are automatically installed via Mason
+- Mason is available for manual tool installation; LSP servers are not auto-installed
 - Formatting is handled by conform.nvim with `oxfmt`, Ruff, Stylua, and others
 - JavaScript/TypeScript use `tsgo` for LSP and `oxlint`/`oxfmt` for linting and formatting
 - Python uses Ruff plus `ty` for fast linting, formatting, imports, and language features

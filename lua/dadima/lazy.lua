@@ -11,7 +11,12 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup("dadima.plugins", {
+require("lazy").setup({
+  { import = "dadima.plugins" },
+  { import = "dadima.lsp" },
+  { import = "dadima.treesitter" },
+  { import = "dadima.git" },
+}, {
   change_detection = {
     notify = false,
   },
