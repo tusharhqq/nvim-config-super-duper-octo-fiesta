@@ -7,14 +7,16 @@ Personal Neovim configuration for a fast, keyboard-focused editor setup with laz
 This repository contains my Neovim config. The entry point is `init.lua`, which loads the `lua/dadima/` modules:
 
 - `lua/dadima/init.lua` wires the config together.
-- `lua/dadima/lazy.lua` bootstraps and configures lazy.nvim.
-- `lua/dadima/plugins.lua` declares shared plugin specs and tooling.
-- `lua/dadima/lsp.lua` configures language servers, completion, diagnostics, and formatting.
+- `lua/dadima/lazy.lua` bootstraps lazy.nvim and imports plugin modules in load order.
+- `lua/dadima/plugins.lua` declares shared plugin specs, conform.nvim formatting, and nvim-lint linting.
+- `lua/dadima/lsp.lua` configures language servers, completion, and LSP-specific settings.
 - `lua/dadima/treesitter.lua` configures Treesitter.
+- `lua/dadima/markdown.lua` disables the unstable Markdown Treesitter path and is loaded before lazy.nvim.
+- `lua/dadima/harpoon.lua` configures Harpoon navigation and keymaps.
 - `lua/dadima/git.lua` configures Git integrations.
 - `lua/dadima/undotree.lua` configures undo history.
 - `lua/dadima/remap.lua` defines keymaps.
-- `lua/dadima/set.lua` defines editor options.
+- `lua/dadima/set.lua` defines editor options and global diagnostic display behavior.
 - `lazy-lock.json` pins plugin versions.
 
 ## Who is it for?
@@ -62,8 +64,10 @@ Keep changes small and focused. Before changing mappings, plugin behavior, or wo
 Useful areas to check before contributing:
 
 - `lua/dadima/remap.lua` for keymaps
-- `lua/dadima/plugins.lua`, `lua/dadima/lsp.lua`, `lua/dadima/git.lua`, `lua/dadima/treesitter.lua`, and `lua/dadima/undotree.lua` for plugin setup
-- `lua/dadima/set.lua` for editor options
+- `lua/dadima/plugins.lua` for shared plugin specs, formatting, and linting
+- `lua/dadima/lsp.lua`, `lua/dadima/harpoon.lua`, `lua/dadima/git.lua`, `lua/dadima/treesitter.lua`, and `lua/dadima/undotree.lua` for focused plugin setup
+- `lua/dadima/markdown.lua` for Markdown Treesitter guards that affect startup and formatting behavior
+- `lua/dadima/set.lua` for editor options and diagnostic display settings
 - `jj.md` for the repo workflow notes
 
 ## License
