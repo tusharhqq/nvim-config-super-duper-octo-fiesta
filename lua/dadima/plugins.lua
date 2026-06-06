@@ -628,6 +628,7 @@ return {
 			vim.opt.signcolumn = "yes"
 
 			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("dadima_lsp_attach", { clear = true }),
 				callback = function(event)
 					local opts = { buffer = event.buf }
 					vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
@@ -639,7 +640,14 @@ return {
 					vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, opts)
 					vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 					vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+
+					local client = vim.lsp.get_client_by_id(event.data.client_id)
+					if client and client.name == "ruff" then
+						-- Disable hover in favor of ty
+						client.server_capabilities.hoverProvider = false
+					end
 				end,
+				desc = "LSP: Set keymaps and client-specific capabilities",
 			})
 
 			-- Setup Mason LSP Config only if available (deferred to reduce startup time)
@@ -726,21 +734,6 @@ return {
 			})
 			vim.lsp.enable("ruff", true)
 
-			-- Disable Ruff's hover if using ty for hover and completions
-			vim.api.nvim_create_autocmd("LspAttach", {
-				group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
-				callback = function(args)
-					local client = vim.lsp.get_client_by_id(args.data.client_id)
-					if client == nil then
-						return
-					end
-					if client.name == "ruff" then
-						-- Disable hover in favor of ty
-						client.server_capabilities.hoverProvider = false
-					end
-				end,
-				desc = "LSP: Disable hover capability from Ruff",
-			})
 
 			vim.lsp.config("ty", {
 				capabilities = capabilities,

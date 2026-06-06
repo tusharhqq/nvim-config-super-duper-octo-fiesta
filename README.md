@@ -184,7 +184,6 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 | `K` | Show hover documentation |
 | `gs` | Signature help |
 | `<leader>rn` | Rename symbol |
-| `<leader>fm` | Format code |
 | `<leader>ca` | Code actions |
 | `<C-o>` | Jump back |
 | `<C-i>` | Jump back forward (reverse of the above command |
@@ -227,7 +226,7 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 | Shortcut | Action |
 |---|---|
 | `<leader>u` | Toggle undo tree |
-| `<leader>mp` | Format file (oxfmt/ruff/stylua) |
+| `<leader>fm` | Format file or selection (oxfmt/ruff/stylua) |
 | `<leader>x` | Make file executable |
 | `:Lazy sync` | Update plugins |
 
