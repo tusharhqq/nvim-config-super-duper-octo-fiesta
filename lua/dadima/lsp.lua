@@ -10,6 +10,8 @@ local lsp_maps = {
 	{ "<leader>ca", vim.lsp.buf.code_action },
 }
 
+local languages = require("dadima.languages")
+
 return {
 	-- Mason
 	{
@@ -80,8 +82,6 @@ return {
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
-			local mason_bin = require("dadima.mason_bin")
-
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("dadima_lsp_attach", { clear = true }),
 				callback = function(event)
@@ -90,7 +90,19 @@ return {
 						vim.keymap.set("n", map[1], map[2], opts)
 					end
 				end,
-				desc = "LSP: Set keymaps and client-specific capabilities",
+				desc = "LSP: Set buffer keymaps",
+			})
+
+			-- Ruff docs: disable hover when another Python LSP (ty) owns it.
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
+				callback = function(event)
+					local client = vim.lsp.get_client_by_id(event.data.client_id)
+					if client and client.name == "ruff" then
+						client.server_capabilities.hoverProvider = false
+					end
+				end,
+				desc = "LSP: Disable hover capability from Ruff",
 			})
 
 			-- Get default capabilities for LSP
@@ -101,51 +113,11 @@ return {
 			else
 				capabilities = vim.lsp.protocol.make_client_capabilities()
 			end
-
-			local servers = {
-				{
-					name = "lua_ls",
-					config = {
-						settings = {
-							Lua = {
-								diagnostics = {
-									globals = { "vim" },
-								},
-							},
-						},
-					},
-				},
-				{ name = "bashls" },
-				{ name = "clangd" },
-				{ name = "dockerls" },
-				{ name = "rust_analyzer" },
-				{ name = "gopls" },
-				{ name = "html" },
-				{ name = "jsonls" },
-				{ name = "svelte" },
-				{ name = "tsgo" },
-				{ name = "oxlint" },
-				{ name = "zls" },
-				{
-					name = "ruff",
-					config = {
-						on_init = function(client)
-							-- Disable hover in favor of ty.
-							client.server_capabilities.hoverProvider = false
-						end,
-					},
-				},
-				{ name = "ty" },
-				{
-					name = "ocamllsp",
-					config = {
-						cmd = { mason_bin .. "/ocamllsp" },
-					},
-				},
-			}
+			local servers = languages.lsp_servers()
 
 			for _, server in ipairs(servers) do
-				local config = vim.tbl_deep_extend("force", { capabilities = capabilities }, server.config or {})
+				local config = vim.tbl_deep_extend("force", {}, server.config or {})
+				config.capabilities = config.capabilities or capabilities
 
 				vim.lsp.config(server.name, config)
 				vim.lsp.enable(server.name, true)

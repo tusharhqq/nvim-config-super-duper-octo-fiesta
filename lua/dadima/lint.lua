@@ -4,6 +4,7 @@ return {
 		"mfussenegger/nvim-lint",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
+			local languages = require("dadima.languages")
 			local lint = require("lint")
 			local function filter_available_linters(names)
 				return vim.tbl_filter(function(name)
@@ -21,17 +22,7 @@ return {
 				end, names)
 			end
 
-			lint.linters_by_ft = {
-				lua = { "luacheck" },
-				json = { "jsonlint" },
-				yaml = { "yamllint" },
-				go = { "golangcilint" },
-				-- Rust diagnostics are handled by rust-analyzer. Running clippy
-				-- automatically on every Rust buffer open is slow and noisy because
-				-- nvim-lint's clippy linter shells out to `cargo clippy`.
-				-- Run `cargo clippy` manually when you want full project linting.
-				-- rust = { "clippy" },
-			}
+			lint.linters_by_ft = languages.linters_by_ft()
 
 			-- Create autocommand which carries out the actual linting
 			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })

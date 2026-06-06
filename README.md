@@ -9,11 +9,12 @@ This repository contains my Neovim config. The entry point is `init.lua`, which 
 - `lua/dadima/init.lua` wires the config together.
 - `lua/dadima/lazy.lua` bootstraps lazy.nvim and imports plugin modules in load order.
 - `lua/dadima/plugins.lua` declares shared plugin specs, theme setup, and Telescope.
+- `lua/dadima/languages.lua` defines language toolchain wiring shared by LSP, formatting, linting, and Treesitter.
+- `lsp/ruff.lua` defines the Ruff language server config for Neovim 0.11+ (ty owns hover; see `lua/dadima/lsp.lua`).
 - `lua/dadima/format.lua` configures conform.nvim formatting.
 - `lua/dadima/lint.lua` configures nvim-lint.
 - `lua/dadima/lsp.lua` configures language servers, completion, and LSP-specific settings.
 - `lua/dadima/go.lua` defines Go-only buffer-local snippets.
-- `lua/dadima/mason_bin.lua` exposes the Mason bin path for Mason-managed tools (e.g. `ocamllsp`, `ocamlformat`).
 - `lua/dadima/treesitter.lua` configures Treesitter.
 - `lua/dadima/markdown.lua` disables the unstable Markdown Treesitter path and is loaded before lazy.nvim.
 - `lua/dadima/harpoon.lua` configures Harpoon navigation and keymaps.
@@ -68,7 +69,10 @@ Keep changes small and focused. Before changing mappings, plugin behavior, or wo
 Useful areas to check before contributing:
 
 - `lua/dadima/remap.lua` for keymaps
-- `lua/dadima/plugins.lua` for shared plugin specs, formatting, and linting
+- `lua/dadima/plugins.lua` for shared plugin specs, theme setup, and Telescope
+- `lua/dadima/languages.lua` for shared language toolchain entries
+- `lua/dadima/format.lua` and `lua/dadima/lint.lua` for formatting and linting plugin behavior
+- `lua/dadima/go.lua` for Go-only buffer-local snippets
 - `lua/dadima/lsp.lua`, `lua/dadima/harpoon.lua`, `lua/dadima/git.lua`, `lua/dadima/treesitter.lua`, and `lua/dadima/undotree.lua` for focused plugin setup
 - `lua/dadima/markdown.lua` for Markdown Treesitter guards that affect startup and formatting behavior
 - `lua/dadima/set.lua` for editor options and diagnostic display settings
@@ -298,7 +302,7 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 ## Notes
 
 - The configuration uses a transparent background for terminal aesthetics
-- Mason is available for manual tool installation; LSP servers are not auto-installed
+- Mason is available for manual tool installation; configured LSP servers are hard-enabled and expected to be installed through Mason or otherwise available on `PATH`
 - Formatting is handled by conform.nvim with `oxfmt`, Ruff, Stylua, and others
 - JavaScript/TypeScript use `tsgo` for LSP and `oxlint`/`oxfmt` for linting and formatting
 - Python uses Ruff plus `ty` for fast linting, formatting, imports, and language features

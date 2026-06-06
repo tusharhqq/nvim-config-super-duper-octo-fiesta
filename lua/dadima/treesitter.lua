@@ -1,15 +1,11 @@
 local markdown = require("dadima.markdown")
+local languages = require("dadima.languages")
 
 return {
 	-- Auto Tag
 	{
 		"windwp/nvim-ts-autotag",
-		ft = {
-			"javascript",
-			"typescript",
-			"typescriptreact",
-			"javascriptreact",
-		},
+		ft = languages.autotag_filetypes(),
 		config = function()
 			require("nvim-ts-autotag").setup()
 		end,
@@ -25,24 +21,7 @@ return {
 				ignore_install = markdown.langs,
 
 				-- Only install essential parsers at startup
-				ensure_installed = {
-					"bash",
-					"css",
-					"go",
-					"html",
-					"javascript",
-					"json",
-					"lua",
-					"vim",
-					"vimdoc",
-					"python",
-					"query", -- Essential for nvim
-					"rust",
-					"toml",
-					"tsx",
-					"typescript",
-					"yaml",
-				},
+				ensure_installed = languages.treesitter_ensure_installed(),
 
 				-- Install parsers synchronously (only applied to `ensure_installed`)
 				sync_install = false,
@@ -68,8 +47,21 @@ return {
 
 				indent = {
 					enable = true,
-					disable = { "c", "cpp", markdown.ft },
+					disable = vim.list_extend(languages.treesitter_indent_disable(), { markdown.ft }),
 				},
+			})
+		end,
+	},
+
+	-- Sticky scroll: pin function/class headers at top while scrolling
+	{
+		"nvim-treesitter/nvim-treesitter-context",
+		event = { "BufReadPost", "BufNewFile" },
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		config = function()
+			require("treesitter-context").setup({
+				max_lines = 3,
+				multiline_threshold = 20,
 			})
 		end,
 	},

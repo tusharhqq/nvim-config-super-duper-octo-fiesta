@@ -1,4 +1,5 @@
 local markdown = require("dadima.markdown")
+local languages = require("dadima.languages")
 
 return {
 	-- Formatting (using conform.nvim instead of none-ls)
@@ -7,7 +8,6 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local conform = require("conform")
-			local mason_bin = require("dadima.mason_bin")
 			local format_opts = {
 				lsp_format = "fallback",
 				async = false,
@@ -27,34 +27,8 @@ return {
 							".git",
 						}),
 					},
-					ocamlformat = {
-						command = mason_bin .. "/ocamlformat",
-					},
 				},
-				formatters_by_ft = {
-					javascript = { "oxfmt" },
-					typescript = { "oxfmt" },
-					javascriptreact = { "oxfmt" },
-					typescriptreact = { "oxfmt" },
-					css = { "oxfmt" },
-					html = { "oxfmt" },
-					json = { "oxfmt" },
-					yaml = { "oxfmt" },
-					toml = { "oxfmt" },
-					lua = { "stylua" },
-					python = {
-						-- To fix auto-fixable lint errors.
-						"ruff_fix",
-						-- To organize the imports.
-						"ruff_organize_imports",
-						-- To run the Ruff formatter after fixes/import changes.
-						"ruff_format",
-					},
-					go = { "gofmt" },
-					rust = { "rustfmt" },
-					ocaml = { "ocamlformat" },
-					reason = { "ocamlformat" },
-				},
+				formatters_by_ft = languages.formatters_by_ft(),
 				format_on_save = function(bufnr)
 					if markdown.is_markdown_buf(bufnr) then
 						return nil
