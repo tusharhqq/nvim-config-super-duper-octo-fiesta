@@ -93,18 +93,6 @@ return {
 				desc = "LSP: Set buffer keymaps",
 			})
 
-			-- Ruff docs: disable hover when another Python LSP (ty) owns it.
-			vim.api.nvim_create_autocmd("LspAttach", {
-				group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
-				callback = function(event)
-					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if client and client.name == "ruff" then
-						client.server_capabilities.hoverProvider = false
-					end
-				end,
-				desc = "LSP: Disable hover capability from Ruff",
-			})
-
 			-- Get default capabilities for LSP
 			local capabilities
 			local cmp_nvim_lsp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")

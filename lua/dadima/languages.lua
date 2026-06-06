@@ -100,6 +100,9 @@ local language_specs = {
 		name = "rust",
 		treesitter = "rust",
 		formatters = { "rustfmt" },
+		-- linters intentionally omitted: rust-analyzer handles diagnostics. nvim-lint's
+		-- clippy linter shells out to `cargo clippy` on every buffer, which is slow and
+		-- noisy — run `cargo clippy` manually for full project linting.
 		lsp = "rust_analyzer",
 	},
 	{
