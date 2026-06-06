@@ -8,8 +8,12 @@ This repository contains my Neovim config. The entry point is `init.lua`, which 
 
 - `lua/dadima/init.lua` wires the config together.
 - `lua/dadima/lazy.lua` bootstraps lazy.nvim and imports plugin modules in load order.
-- `lua/dadima/plugins.lua` declares shared plugin specs, conform.nvim formatting, and nvim-lint linting.
+- `lua/dadima/plugins.lua` declares shared plugin specs, theme setup, and Telescope.
+- `lua/dadima/format.lua` configures conform.nvim formatting.
+- `lua/dadima/lint.lua` configures nvim-lint.
 - `lua/dadima/lsp.lua` configures language servers, completion, and LSP-specific settings.
+- `lua/dadima/go.lua` defines Go-only buffer-local snippets.
+- `lua/dadima/mason_bin.lua` exposes the Mason bin path for Mason-managed tools (e.g. `ocamllsp`, `ocamlformat`).
 - `lua/dadima/treesitter.lua` configures Treesitter.
 - `lua/dadima/markdown.lua` disables the unstable Markdown Treesitter path and is loaded before lazy.nvim.
 - `lua/dadima/harpoon.lua` configures Harpoon navigation and keymaps.

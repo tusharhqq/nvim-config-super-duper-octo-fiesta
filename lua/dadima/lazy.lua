@@ -14,6 +14,8 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   { import = "dadima.plugins" },
   { import = "dadima.lsp" },
+  { import = "dadima.format" },
+  { import = "dadima.lint" },
   { import = "dadima.treesitter" },
   { import = "dadima.harpoon" },
   { import = "dadima.git" },

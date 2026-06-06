@@ -1,4 +1,5 @@
 require("dadima.remap")
 require("dadima.set")
+require("dadima.go").setup()
 require("dadima.markdown").setup()
 require("dadima.lazy")
