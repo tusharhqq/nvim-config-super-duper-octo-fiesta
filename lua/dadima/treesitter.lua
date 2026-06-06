@@ -1,3 +1,5 @@
+local markdown = require("dadima.markdown")
+
 return {
 	-- Auto Tag
 	{
@@ -20,9 +22,7 @@ return {
 		build = ":TSUpdate",
 		config = function()
 			require("nvim-treesitter.configs").setup({
-				-- Never install Markdown parsers here; this config intentionally uses
-				-- Vim's regex markdown syntax because the TS parsers crash on Nvim 0.12.x.
-				ignore_install = { "markdown", "markdown_inline" },
+				ignore_install = markdown.langs,
 
 				-- Only install essential parsers at startup
 				ensure_installed = {
@@ -52,10 +52,8 @@ return {
 
 				highlight = {
 					enable = true,
-					-- Markdown Treesitter is unstable on some files in this setup; use
-					-- Neovim's regular markdown syntax highlighting instead.
 					disable = function(lang, buf)
-						if lang == "markdown" or lang == "markdown_inline" then
+						if markdown.is_markdown_lang(lang) then
 							return true
 						end
 
@@ -70,12 +68,9 @@ return {
 
 				indent = {
 					enable = true,
-					disable = { "c", "cpp", "markdown" },
+					disable = { "c", "cpp", markdown.ft },
 				},
 			})
-
-			-- Keep auto_install disabled. Re-enabling it can reinstall/start Markdown
-			-- parsers via injections and bring back the .md crash.
 		end,
 	},
 	{

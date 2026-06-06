@@ -32,26 +32,6 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 
--- The markdown / markdown_inline Treesitter parsers currently crash on this
--- Neovim 0.12.x setup during injection parsing. Use regular markdown syntax
--- highlighting instead and prevent plugins from starting Treesitter for .md files.
-local ts_start = vim.treesitter.start
-vim.treesitter.start = function(bufnr, lang)
-	bufnr = bufnr == 0 and vim.api.nvim_get_current_buf() or (bufnr or vim.api.nvim_get_current_buf())
-	lang = lang or vim.treesitter.language.get_lang(vim.bo[bufnr].filetype)
-	if lang == "markdown" or lang == "markdown_inline" then
-		return
-	end
-	return ts_start(bufnr, lang)
-end
-
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "markdown",
-	callback = function(args)
-		pcall(vim.treesitter.stop, args.buf)
-	end,
-})
-
 vim.diagnostic.config({
 	severity_sort = true,
 	underline = true,

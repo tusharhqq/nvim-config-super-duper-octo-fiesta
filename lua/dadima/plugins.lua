@@ -1,3 +1,5 @@
+local markdown = require("dadima.markdown")
+
 return {
 	-- Package Manager
 	"folke/lazy.nvim",
@@ -10,8 +12,7 @@ return {
 		opts = {
 			bigfile = { enabled = true },
 			notifier = { enabled = true },
-			-- Disabled: quickfile starts Treesitter very early and can crash on some
-			-- markdown files before our Treesitter markdown exclusions apply.
+			-- Disabled: quickfile starts Treesitter before dadima.markdown guards apply.
 			quickfile = { enabled = false },
 			statuscolumn = { enabled = true },
 			words = { enabled = true },
@@ -32,6 +33,11 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local conform = require("conform")
+			local format_opts = {
+				lsp_format = "fallback",
+				async = false,
+				timeout_ms = 1000,
+			}
 
 			conform.setup({
 				formatters = {
@@ -70,26 +76,16 @@ return {
 					rust = { "rustfmt" },
 				},
 				format_on_save = function(bufnr)
-					-- Markdown formatting has been noisy/error-prone here; keep manual
-					-- formatting available via <leader>fm, but never run it on save.
-					if vim.bo[bufnr].filetype == "markdown" then
+					if markdown.is_markdown_buf(bufnr) then
 						return nil
 					end
 
-					return {
-						lsp_format = "fallback",
-						async = false,
-						timeout_ms = 1000,
-					}
+					return format_opts
 				end,
 			})
 
 			vim.keymap.set({ "n", "v" }, "<leader>fm", function()
-				conform.format({
-					lsp_format = "fallback",
-					async = false,
-					timeout_ms = 1000,
-				})
+				conform.format(format_opts)
 			end, { desc = "Format file or range (in visual mode)" })
 		end,
 	},

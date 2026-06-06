@@ -69,8 +69,6 @@ return {
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
-			vim.opt.signcolumn = "yes"
-
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("dadima_lsp_attach", { clear = true }),
 				callback = function(event)

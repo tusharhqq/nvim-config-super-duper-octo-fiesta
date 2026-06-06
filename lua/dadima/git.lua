@@ -1,5 +1,5 @@
 return {
-	-- Navigation and Git
+	-- Git
 	{
 		"tpope/vim-fugitive",
 		cmd = {
