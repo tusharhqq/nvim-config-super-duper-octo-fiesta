@@ -244,45 +244,7 @@ This README is a personal reference sheet that includes custom mappings, plugin 
 
 | Shortcut | Action |
 |---|---|
-| `lua ColorMyPencils()` | Restore transparent background |
 | `:TSPlaygroundToggle` | Toggle treesitter playground |
-
-<!-- ### Avante AI Assistant (DISABLED)
-
-_Space is the leader key_
-
-| Shortcut     | Action                                  |
-| ------------ | --------------------------------------- |
-| `<leader>aa` | Toggle Avante sidebar                   |
-| `<leader>ac` | Start Avante chat                       |
-| `<leader>ai` | Edit selected code with Avante (visual) |
-| `<leader>ar` | Refresh Avante                          |
-| `<leader>af` | Switch Avante sidebar focus             |
-| `co`         | Choose ours (conflict resolution)       |
-| `ct`         | Choose theirs (conflict resolution)     |
-| `ca`         | Choose all theirs (conflict resolution) |
-| `c0`         | Choose none (conflict resolution)       |
-| `cb`         | Choose both (conflict resolution)       |
-| `cc`         | Choose cursor (conflict resolution)     |
-| `]x`         | Move to previous conflict               |
-| `[x`         | Move to next conflict                   |
-| `[[`         | Jump to previous code blocks (results)  |
-| `]]`         | Jump to next code blocks (results)      |
-
-#### Avante Commands
-
-| Command                 | Description                   |
-| ----------------------- | ----------------------------- |
-| `:AvanteAsk [question]` | Ask AI about your code        |
-| `:AvanteChat`           | Start chat session with AI    |
-| `:AvanteEdit`           | Edit selected code blocks     |
-| `:AvanteFocus`          | Switch focus to/from sidebar  |
-| `:AvanteToggle`         | Toggle Avante sidebar         |
-| `:AvanteRefresh`        | Refresh all Avante windows    |
-| `:AvanteSwitchProvider` | Switch AI provider            |
-| `:AvanteShowRepoMap`    | Show repository structure map |
-| `:AvanteBuild`          | Build project dependencies    |
--->
 
 ### Text Objects & Motions
 
@@ -379,7 +341,6 @@ nvim
 - Formatting is handled by conform.nvim with `oxfmt`, Ruff, Stylua, and others
 - JavaScript/TypeScript use `tsgo` for LSP and `oxlint`/`oxfmt` for linting and formatting
 - Python uses Ruff plus `ty` for fast linting, formatting, imports, and language features
-<!-- - Avante.nvim provides AI-powered code assistance with Claude Sonnet 4 and Moonshot models (DISABLED) -->
 - All plugins are lazy-loaded for optimal startup performance
 
 ---
