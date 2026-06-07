@@ -216,7 +216,6 @@ jjlt() {
     s/§([^§]+)§/colorize($1)/ge
   ' | less -XFRS
 }
-alias jl='jj log'
 alias jlr='jj lr'
 
 # tmux
@@ -548,6 +547,7 @@ cj() {
 }
 
 alias ck='agent'
+alias cc='claude'
 
 vs() {
   open "${1:-.}" -a "Visual Studio Code"

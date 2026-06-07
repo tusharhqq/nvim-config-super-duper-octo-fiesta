@@ -62,6 +62,9 @@ return {
 			require("treesitter-context").setup({
 				max_lines = 3,
 				multiline_threshold = 20,
+				on_attach = function(bufnr)
+					return not markdown.is_markdown_buf(bufnr)
+				end,
 			})
 		end,
 	},
