@@ -25,6 +25,15 @@ return {
 	-- Sneak
 	"justinmk/vim-sneak",
 
+	-- GitHub PRs/issues
+	{
+		"justinmk/guh.nvim",
+		cmd = "Guh",
+		keys = {
+			{ "<leader>gh", "<cmd>Guh<cr>", desc = "GitHub PRs/issues" },
+		},
+	},
+
 	-- Telescope
 	{
 		"nvim-telescope/telescope.nvim",
