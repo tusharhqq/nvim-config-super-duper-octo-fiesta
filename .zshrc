@@ -26,18 +26,20 @@ unsetopt HIST_VERIFY          # Execute commands using history (e.g.: using !$) 
 # COMPLETION
 #############
 
-# Add completions installed through Homebrew packages
-# See: https://docs.brew.sh/Shell-Completion
-if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:$FPATH"
-fi
+# Homebrew is initialized by ~/.zprofile.
+# Add its completion directory without invoking brew during shell startup.
+[[ -d /opt/homebrew/share/zsh/site-functions ]] &&
+  fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
+[[ -d "$HOME/.docker/completions" ]] &&
+  fpath=("$HOME/.docker/completions" $fpath)
 
 # Speed up completion init, see: https://gist.github.com/ctechols/ca1035271ad134841284
 autoload -Uz compinit
-for dump in ~/.zcompdump(N.mh+24); do
+if [[ ~/.zcompdump -nt /opt/homebrew/share/zsh/site-functions ]]; then
+  compinit -C
+else
   compinit
-done
-compinit -C
+fi
 
 # unsetopt menucomplete
 unsetopt flowcontrol
@@ -134,11 +136,8 @@ alias rsyncssh='rsync -Pr --rsh=ssh'
 alias ez='vi ~/.zshrc'
 alias sz='source ~/.zshrc'
 
-#fzf 
+# fzf
 alias ea='nvim $(fzf --preview="cat {}")'
-#alias fkf ='nvim $(fzf --preview="cat {}")'
-#vi $(fzf --preview='cat {}')
-#nvim $(fzf --preview='cat {}')
 
 # git
 alias monsterclean='git clean -fdx -e .jj/'
@@ -149,6 +148,7 @@ alias gc='git commit'
 alias gcm='git checkout main' 
 alias gd='git diff'
 alias gdc='git diff --cached'
+alias gl='git log'
 # [c]heck [o]ut
 alias co='git checkout'
 # [f]uzzy check[o]ut
@@ -163,7 +163,7 @@ alias up='git push'
 alias upl='git push --force-with-lease'
 alias pu='git pull'
 alias pur='git pull --rebase'
-alias fe='git fetch'
+alias gf='git fetch'
 alias re='git rebase'
 alias lr='git l -30'
 alias cdr='cd $(git rev-parse --show-toplevel)' # cd to git Root
@@ -183,9 +183,7 @@ jj-update-branch() {
 
 alias jjub=jj-update-branch
 alias jn='jj new'
-jrt() {
-  jj new 'trunk()'
-}
+alias jrt="jj new 'trunk()'"
 alias jc='jj commit'
 alias jst='jj status'
 alias jf='jj git fetch'
@@ -216,7 +214,6 @@ jjlt() {
     s/§([^§]+)§/colorize($1)/ge
   ' | less -XFRS
 }
-alias jlr='jj lr'
 
 # tmux
 alias tma='tmux attach -t'
@@ -237,6 +234,15 @@ alias -g withcolors="| sed '/PASS/s//$(printf "\033[32mPASS\033[0m")/' | sed '/F
 alias zedn='/Applications/Zed\ Nightly.app/Contents/MacOS/cli'
 alias r='cargo run'
 alias rr='cargo run --release'
+
+if command -v sfw >/dev/null; then
+  alias npm='sfw npm'
+  alias npx='sfw npx'
+  alias pnpm='sfw pnpm'
+  alias pnpx='sfw pnpx'
+  alias yarn='sfw yarn'
+  alias bun='sfw bun'
+fi
 
 alias p='pnpm'
 alias pd='pnpm dev'
@@ -318,19 +324,6 @@ pr() {
 
 setopt prompt_subst
 
-git_prompt_info() {
-  local dirstatus=" OK"
-  local dirty="%{$fg_bold[red]%} X%{$reset_color%}"
-
-  if [[ ! -z $(git status --porcelain 2> /dev/null | tail -n1) ]]; then
-    dirstatus=$dirty
-  fi
-
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || \
-  ref=$(git rev-parse --short HEAD 2> /dev/null) || return
-  echo " %{$fg_bold[green]%}${ref#refs/heads/}$dirstatus%{$reset_color%}"
-}
-
 jj_prompt_info() {
   local dirty="%{$fg_bold[red]%} X%{$reset_color%}"
   local clean=""
@@ -409,14 +402,6 @@ fi
 
 local dir_info="%{$dir_info_color%}%(5~|%-1~/.../%2~|%4~)%{$reset_color%}"
 local promptnormal="φ %{$reset_color%}"
-local promptjobs="%{$fg_bold[red]%}φ %{$reset_color%}"
-
-
-
-simple_prompt() {
-  local prompt_color="%B"
-  export PROMPT="%{$prompt_color%}$promptnormal"
-}
 
 PROMPT='${dir_info}$(vcs_prompt_info) $promptnormal'
 
@@ -462,72 +447,27 @@ if type fzf &> /dev/null && type rg &> /dev/null; then
   export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 
-
 # direnv
 if type direnv &> /dev/null; then
   eval "$(direnv hook zsh)"
 fi
 
-
-
-
-
-
-
-
-export PATH=$PATH:/Users/blouse_man/go/bin
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-
-# commented the working code and replaced it with this other version
-#PQ_LIB_DIR="$(brew --prefix libpq)/lib"
-PQ_LIB_DIR="/opt/homebrew/opt/libpq/lib"
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
-
-##export JAVA_HOME=$(/usr/libexec/java_home)
-##export PATH=$JAVA_HOME/bin:$PATH
-#
-#export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-##export JAVA_HOME=$(/usr/libexec/java_home -v 11)
-##export JAVA_HOME=$(/usr/libexec/java_home -v 22)
-#export PATH=$JAVA_HOME/bin:$PATH
-#
 # pnpm
-export PNPM_HOME="/Users/blouse_man/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+export PNPM_HOME="$HOME/Library/pnpm"
+path=(
+  /opt/homebrew/opt/llvm/bin
+  /opt/homebrew/opt/libpq/bin
+  "$HOME/go/bin"
+  "$PNPM_HOME"
+  $path
+)
 # pnpm end
-#
-#
 
-
-
-
-
-# BEGIN opam configuration
-# This is useful if you're using opam as it adds:
-#   - the correct directories to the PATH
-#   - auto-completion for the opam binary
-# This section can be safely removed at any time if needed.
-#
-#
-#
-# this one works pretty good 
-#[[ ! -r '/Users/blouse_man/.opam/opam-init/init.zsh' ]] || source '/Users/blouse_man/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
-#
-#
-#
-#
-# END opam configuration
-#
-#
 # Lazy-load opam so shell startup does not source its completion/env hooks.
 if command -v opam >/dev/null; then
   opam() {
@@ -537,10 +477,9 @@ if command -v opam >/dev/null; then
   }
 fi
 
-#source <(fzf --zsh)
-export GPG_TTY=$(tty) # or /Users/blouse_man/.bashrc if you use bash
+export GPG_TTY=$(tty) # or ~/.bashrc if you use bash
 
-[[ -d "/opt/homebrew/opt/sevenzip/bin" ]] && export PATH="/opt/homebrew/opt/sevenzip/bin:$PATH"
+[[ -d "/opt/homebrew/opt/sevenzip/bin" ]] && path=(/opt/homebrew/opt/sevenzip/bin $path)
 
 cj() {
   open "${1:-.}" -a "Cursor"
@@ -558,14 +497,18 @@ if command -v rbenv >/dev/null; then
 fi
 
 #zprof
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/blouse_man/.docker/completions $fpath)
-# End of Docker CLI completions
-
 autoload -U +X bashcompinit && bashcompinit
 [[ -x /opt/homebrew/bin/terraform ]] && complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
-command -v jj >/dev/null && source <(COMPLETE=zsh jj)
+if (( $+commands[jj] )); then
+  jj_completion_cache="$HOME/.zcompcache/jj.zsh"
+  if [[ ! -s "$jj_completion_cache" || "$jj_completion_cache" -ot "$commands[jj]" ]]; then
+    mkdir -p "${jj_completion_cache:h}"
+    COMPLETE=zsh jj >| "$jj_completion_cache"
+  fi
+  source "$jj_completion_cache"
+fi
+
 if command -v opencode >/dev/null; then
   local opencode_completion_cache="${HOME}/.zcompcache/opencode.zsh"
   if [[ ! -s "$opencode_completion_cache" || "$opencode_completion_cache" -ot "$(command -v opencode)" ]]; then
@@ -577,26 +520,14 @@ fi
 alias gcc="/opt/homebrew/bin/gcc-15"
 alias g++="/opt/homebrew/bin/g++-15"
 
-if command -v sfw >/dev/null; then
-  alias npm="sfw npm"
-  alias npx="sfw npx"
-  alias pnpm="sfw pnpm"
-  alias pnpx="sfw pnpx"
-  alias yarn="sfw yarn"
-  alias bun="sfw bun"
-fi
-
 # Added by Antigravity
-export PATH="/Users/blouse_man/.antigravity/antigravity/bin:$PATH"
-
-
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+path=("$HOME/.antigravity/antigravity/bin" $path)
 
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 for haskell_path in "$HOME/.ghcup/bin" "$HOME/.cabal/bin"; do
-  [[ -d "$haskell_path" ]] && PATH="$haskell_path:$PATH"
+  [[ -d "$haskell_path" ]] && path=("$haskell_path" $path)
 done
 
-path=(${(@)path:#/Users/blouse_man/.local/bin/zig})
-path=(${(@)path:#/Users/blouse_man/.local/share/nvim/lazy/fzf/bin})
+path=(${(@)path:#${HOME}/.local/bin/zig})
+path=(${(@)path:#${HOME}/.local/share/nvim/lazy/fzf/bin})
 export PATH
