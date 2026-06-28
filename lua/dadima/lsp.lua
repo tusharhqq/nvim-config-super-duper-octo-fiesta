@@ -50,8 +50,11 @@ return {
 					{ name = "buffer" },
 					{ name = "path" },
 				},
-				-- Required by nvim-cmp, even though this config does not use snippet expansion.
-				snippet = { expand = function() end },
+				snippet = {
+					expand = function(args)
+						vim.snippet.expand(args.body)
+					end,
+				},
 				mapping = cmp.mapping.preset.insert({
 					["<C-b>"] = cmp.mapping.scroll_docs(-4),
 					["<C-f>"] = cmp.mapping.scroll_docs(4),
@@ -92,6 +95,21 @@ return {
 				end,
 				desc = "LSP: Set buffer keymaps",
 			})
+
+			vim.api.nvim_create_user_command("LspInfo", function()
+				local clients = vim.lsp.get_clients({ bufnr = 0 })
+				if vim.tbl_isempty(clients) then
+					vim.notify("No LSP clients attached to this buffer")
+					return
+				end
+
+				local lines = {}
+				for _, client in ipairs(clients) do
+					table.insert(lines, string.format("%s (id: %d)", client.name, client.id))
+				end
+
+				vim.notify(table.concat(lines, "\n"), vim.log.levels.INFO, { title = "LSP clients" })
+			end, { desc = "Show attached LSP clients for the current buffer" })
 
 			-- Get default capabilities for LSP
 			local capabilities
